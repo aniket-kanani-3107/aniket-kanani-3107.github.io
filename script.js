@@ -2,9 +2,9 @@ import * as THREE from "https://unpkg.com/three@0.164.1/build/three.module.js";
 import { EffectComposer } from "https://unpkg.com/three@0.164.1/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://unpkg.com/three@0.164.1/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "https://unpkg.com/three@0.164.1/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { gsap } from "https://esm.sh/gsap@3.12.5";
+import { ScrollTrigger } from "https://esm.sh/gsap@3.12.5/ScrollTrigger";
 
-const { gsap } = window;
-const { ScrollTrigger } = window;
 gsap.registerPlugin(ScrollTrigger);
 
 const threeContainer = document.querySelector("#three-container");
@@ -26,7 +26,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, 0, 6);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 threeContainer.appendChild(renderer.domElement);
@@ -106,7 +106,7 @@ const objects = projectDefinitions.map((item, index) => {
     sizeAttenuation: true,
     transparent: true,
     opacity: 0,
-    depthWrite: false,
+    depthWrite: true,
   });
   const points = new THREE.Points(pointsGeometry, pointsMaterial);
 

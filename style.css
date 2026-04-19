@@ -6,6 +6,8 @@
   --accent: #66f2ff;
   --accent-2: #a66cff;
   --border: rgba(255, 255, 255, 0.12);
+  /* Scroll distance used to give the 3D transition enough interpolation space. */
+  --portfolio-height: 360vh;
 }
 
 * {
@@ -116,7 +118,7 @@ h3 {
 }
 
 #portfolio {
-  min-height: 360vh;
+  min-height: var(--portfolio-height);
 }
 
 .sticky-stage {
