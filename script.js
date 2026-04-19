@@ -106,7 +106,7 @@ const objects = projectDefinitions.map((item, index) => {
     sizeAttenuation: true,
     transparent: true,
     opacity: 0,
-    depthWrite: true,
+    depthWrite: false,
   });
   const points = new THREE.Points(pointsGeometry, pointsMaterial);
 
@@ -128,6 +128,7 @@ const objects = projectDefinitions.map((item, index) => {
 let portfolioProgress = 0;
 const mouse = { x: 0, y: 0 };
 const cameraTarget = new THREE.Vector3(0, 0, 0);
+const PROGRESS_COMPLETE_THRESHOLD = 0.999;
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const remap = (v, min, max) => clamp01((v - min) / (max - min));
@@ -225,7 +226,7 @@ function updatePortfolioState(progress) {
     return;
   }
 
-  if (progress >= 0.999) {
+  if (progress >= PROGRESS_COMPLETE_THRESHOLD) {
     showSolidObject(objects.length - 1);
     return;
   }
