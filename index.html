@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Portfolio</title>
+    <title>Modern 3D Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,41 +15,64 @@
   <body>
     <div id="loading-screen" aria-live="polite">
       <div class="loader-ring" aria-hidden="true"></div>
-      <p>Loading experience...</p>
+      <p>Loading website...</p>
+      <small>If this takes too long, content will load automatically.</small>
     </div>
 
     <div id="three-container" aria-hidden="true"></div>
 
     <main id="app" class="hidden-on-load">
-      <section id="hero" class="panel full-screen">
-        <div class="content-card fade-up">
+      <section id="hero" class="section full-screen">
+        <div class="glass fade-up">
           <p class="eyebrow">Portfolio</p>
           <h1>Your Name</h1>
           <h2>3D Artist &amp; Visual Designer</h2>
-          <p class="subtitle">I create immersive 3D experiences</p>
+          <p class="muted">I create immersive 3D experiences</p>
         </div>
       </section>
 
-      <section id="portfolio" class="panel">
-        <div class="sticky-stage">
-          <div class="project-labels fade-up">
-            <p class="eyebrow">Selected Work</p>
+      <section id="portfolio" class="section">
+        <div class="sticky-ui">
+          <div class="glass fade-up panel-small">
+            <p class="eyebrow">3D Projects</p>
             <h3 id="project-title">Neon Cube Study</h3>
-            <p id="project-step">Scroll to morph through projects</p>
+            <p id="project-step" class="muted">Scroll to transition across projects</p>
           </div>
         </div>
         <div class="scroll-spacer" aria-hidden="true"></div>
       </section>
 
-      <section id="contact" class="panel full-screen">
-        <div class="contact-grid fade-up">
+      <section id="services" class="section">
+        <div class="container fade-up">
+          <p class="eyebrow">What I Do</p>
+          <h3>Full Stack Sample Website</h3>
+          <div class="cards">
+            <article class="card">
+              <h4>Frontend</h4>
+              <p>Modern UI, animations, and responsive layouts.</p>
+            </article>
+            <article class="card">
+              <h4>3D Experience</h4>
+              <p>Three.js scenes, transitions, and interactive storytelling.</p>
+            </article>
+            <article class="card">
+              <h4>Integration Ready</h4>
+              <p>Contact form structured for easy backend integration.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section full-screen">
+        <div class="contact-grid glass fade-up">
           <div>
             <p class="eyebrow">Contact</p>
             <h3>Let's Work Together</h3>
-            <p class="subtitle">
-              Open to collaborations. Let's build an immersive visual story.
+            <p class="muted">Open to collaborations for creative digital products.</p>
+            <p class="contact-line">
+              Email:
+              <a href="mailto:example@email.com">example@email.com</a>
             </p>
-            <p class="contact-line">Email: <a href="mailto:example@email.com">example@email.com</a></p>
             <div class="socials" aria-label="Social links">
               <a href="#" aria-label="Dribbble">◉</a>
               <a href="#" aria-label="Behance">◈</a>
@@ -57,7 +80,7 @@
             </div>
           </div>
 
-          <form class="contact-form">
+          <form id="contact-form" class="contact-form">
             <label>
               Name
               <input type="text" name="name" placeholder="Your name" required />
@@ -71,11 +94,15 @@
               <textarea name="message" rows="4" placeholder="Tell me about your project" required></textarea>
             </label>
             <button type="submit">Submit</button>
+            <p id="form-status" class="muted" aria-live="polite"></p>
           </form>
         </div>
       </section>
     </main>
 
-    <script type="module" src="./script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="./script.js"></script>
   </body>
 </html>

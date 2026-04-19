@@ -1,331 +1,331 @@
-import * as THREE from "https://unpkg.com/three@0.164.1/build/three.module.js";
-import { EffectComposer } from "https://unpkg.com/three@0.164.1/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "https://unpkg.com/three@0.164.1/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "https://unpkg.com/three@0.164.1/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { gsap } from "https://esm.sh/gsap@3.12.5";
-import { ScrollTrigger } from "https://esm.sh/gsap@3.12.5/ScrollTrigger";
+(function () {
+  const loadingScreen = document.getElementById("loading-screen");
+  const appRoot = document.getElementById("app");
+  const threeContainer = document.getElementById("three-container");
+  const projectTitle = document.getElementById("project-title");
+  const projectStep = document.getElementById("project-step");
+  const contactForm = document.getElementById("contact-form");
+  const formStatus = document.getElementById("form-status");
 
-gsap.registerPlugin(ScrollTrigger);
-
-const threeContainer = document.querySelector("#three-container");
-const loadingScreen = document.querySelector("#loading-screen");
-const appRoot = document.querySelector("#app");
-const projectTitle = document.querySelector("#project-title");
-const projectStep = document.querySelector("#project-step");
-const form = document.querySelector(".contact-form");
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color("#0a0a0a");
-scene.fog = new THREE.Fog("#0a0a0a", 8, 16);
-
-const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  100
-);
-camera.position.set(0, 0, 6);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-threeContainer.appendChild(renderer.domElement);
-
-// Post-processing for subtle glow around bright edges.
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.7, 0.5, 0.8));
-
-// Realistic lighting setup: key + fill + ambient.
-const ambientLight = new THREE.AmbientLight("#9aa7ff", 0.6);
-const keyLight = new THREE.DirectionalLight("#7edbff", 1.35);
-keyLight.position.set(2.8, 3.2, 4.4);
-const rimLight = new THREE.DirectionalLight("#9d70ff", 0.8);
-rimLight.position.set(-3.5, -2.1, 2.3);
-scene.add(ambientLight, keyLight, rimLight);
-
-const portfolioGroup = new THREE.Group();
-scene.add(portfolioGroup);
-
-const projectDefinitions = [
-  {
-    title: "Neon Cube Study",
-    subtitle: "Geometric balance and rhythm",
-    geometry: () => new THREE.BoxGeometry(1.9, 1.9, 1.9, 14, 14, 14),
-    color: "#57e8ff",
-  },
-  {
-    title: "Signal Sphere",
-    subtitle: "Organic pulse and smooth surfaces",
-    geometry: () => new THREE.SphereGeometry(1.36, 58, 58),
-    color: "#a77dff",
-  },
-  {
-    title: "Orbit Torus",
-    subtitle: "Looping systems and motion depth",
-    geometry: () => new THREE.TorusGeometry(1.12, 0.42, 32, 140),
-    color: "#78ffa8",
-  },
-];
-
-const objects = projectDefinitions.map((item, index) => {
-  const geometry = item.geometry();
-  const positionAttr = geometry.attributes.position;
-  const basePositions = positionAttr.array.slice();
-
-  // Random direction per vertex for the scatter transition stage.
-  const scatterDirections = new Float32Array(basePositions.length);
-  for (let i = 0; i < scatterDirections.length; i += 3) {
-    const vec = new THREE.Vector3(
-      (Math.random() - 0.5) * 2,
-      (Math.random() - 0.5) * 2,
-      (Math.random() - 0.5) * 2
-    ).normalize();
-    scatterDirections[i] = vec.x;
-    scatterDirections[i + 1] = vec.y;
-    scatterDirections[i + 2] = vec.z;
-  }
-
-  const meshMaterial = new THREE.MeshStandardMaterial({
-    color: item.color,
-    emissive: item.color,
-    emissiveIntensity: 0.2,
-    roughness: 0.32,
-    metalness: 0.12,
-    transparent: true,
-    opacity: 0,
-    wireframe: false,
-  });
-
-  const mesh = new THREE.Mesh(geometry, meshMaterial);
-
-  const pointsGeometry = geometry.clone();
-  const pointsMaterial = new THREE.PointsMaterial({
-    color: item.color,
-    size: 0.03,
-    sizeAttenuation: true,
-    transparent: true,
-    opacity: 0,
-    depthWrite: false,
-  });
-  const points = new THREE.Points(pointsGeometry, pointsMaterial);
-
-  mesh.visible = false;
-  points.visible = false;
-  portfolioGroup.add(mesh, points);
-
-  return {
-    index,
-    title: item.title,
-    subtitle: item.subtitle,
-    mesh,
-    points,
-    basePositions,
-    scatterDirections,
-  };
-});
-
-let portfolioProgress = 0;
-const mouse = { x: 0, y: 0 };
-const cameraTarget = new THREE.Vector3(0, 0, 0);
-const PROGRESS_COMPLETE_THRESHOLD = 0.999;
-
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
-const remap = (v, min, max) => clamp01((v - min) / (max - min));
-
-function setProjectCopy(index) {
-  projectTitle.textContent = objects[index].title;
-  projectStep.textContent = objects[index].subtitle;
-}
-
-// Update particle positions by moving each vertex along its random direction.
-function updatePointsScatter(item, amount = 0, shrink = 1) {
-  const positions = item.points.geometry.attributes.position.array;
-
-  for (let i = 0; i < positions.length; i += 3) {
-    positions[i] = item.basePositions[i] * shrink + item.scatterDirections[i] * amount;
-    positions[i + 1] = item.basePositions[i + 1] * shrink + item.scatterDirections[i + 1] * amount;
-    positions[i + 2] = item.basePositions[i + 2] * shrink + item.scatterDirections[i + 2] * amount;
-  }
-
-  item.points.geometry.attributes.position.needsUpdate = true;
-}
-
-function hideAllObjects() {
-  for (const item of objects) {
-    item.mesh.visible = false;
-    item.points.visible = false;
-    item.mesh.material.opacity = 0;
-    item.mesh.material.wireframe = false;
-    item.points.material.opacity = 0;
-    item.mesh.scale.setScalar(1);
-    updatePointsScatter(item, 0, 1);
-  }
-}
-
-function showSolidObject(index) {
-  hideAllObjects();
-  const target = objects[index];
-  target.mesh.visible = true;
-  target.mesh.material.opacity = 1;
-  target.mesh.material.wireframe = false;
-  target.points.visible = false;
-  setProjectCopy(index);
-}
-
-// Complete disappear/appear choreography between two objects.
-function animateTransition(fromIndex, toIndex, t) {
-  const from = objects[fromIndex];
-  const to = objects[toIndex];
-
-  from.mesh.visible = true;
-  from.points.visible = true;
-  to.mesh.visible = true;
-  to.points.visible = true;
-
-  const fadeOut = remap(t, 0, 0.35);
-  const fromWire = remap(t, 0.2, 0.4);
-  const fromPoints = remap(t, 0.35, 0.6);
-
-  const toStart = remap(t, 0.45, 0.65);
-  const toWire = remap(t, 0.65, 0.85);
-  const toSolid = remap(t, 0.8, 1);
-
-  // FROM object: solid -> wireframe -> points -> scattered/shrunk.
-  from.mesh.material.opacity = 1 - fadeOut;
-  from.mesh.material.wireframe = fromWire > 0.05;
-  from.mesh.scale.setScalar(1 - fromPoints * 0.25);
-
-  const fromScatter = fromPoints * 2.1;
-  from.points.material.opacity = fromPoints * (1 - toSolid * 0.75);
-  updatePointsScatter(from, fromScatter, 1 - fromPoints * 0.22);
-
-  // TO object: scattered points -> edge/wire phase -> solid mesh.
-  const toScatter = (1 - toStart) * 2.5;
-  to.points.material.opacity = toStart * (1 - toSolid * 0.86);
-  updatePointsScatter(to, toScatter, 0.7 + toStart * 0.3);
-
-  to.mesh.material.wireframe = toWire > 0.1 && toSolid < 0.92;
-  to.mesh.material.opacity = toSolid;
-  to.mesh.scale.setScalar(0.82 + toStart * 0.18);
-
-  if (t < 0.5) {
-    setProjectCopy(fromIndex);
-  } else {
-    setProjectCopy(toIndex);
-  }
-}
-
-function updatePortfolioState(progress) {
-  const segments = objects.length - 1;
-  const scaled = progress * segments;
-  const segment = Math.floor(scaled);
-
-  if (progress <= 0) {
-    showSolidObject(0);
-    return;
-  }
-
-  if (progress >= PROGRESS_COMPLETE_THRESHOLD) {
-    showSolidObject(objects.length - 1);
-    return;
-  }
-
-  hideAllObjects();
-  const fromIndex = Math.min(segment, segments - 1);
-  const toIndex = Math.min(fromIndex + 1, objects.length - 1);
-  const localProgress = scaled - fromIndex;
-  animateTransition(fromIndex, toIndex, localProgress);
-}
-
-showSolidObject(0);
-
-// Smoothly map mouse movement for parallax and tiny rotational interaction.
-window.addEventListener("pointermove", (event) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = (event.clientY / window.innerHeight) * 2 - 1;
-});
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setSize(window.innerWidth, window.innerHeight);
-});
-
-ScrollTrigger.create({
-  trigger: "#portfolio",
-  start: "top top",
-  end: "bottom bottom",
-  scrub: 1,
-  onUpdate: (self) => {
-    portfolioProgress = self.progress;
-    updatePortfolioState(portfolioProgress);
-  },
-});
-
-// Fade-up entrance for section cards.
-gsap.utils.toArray(".fade-up").forEach((el) => {
-  gsap.fromTo(
-    el,
-    { opacity: 0, y: 22 },
-    {
-      opacity: 1,
-      y: 0,
-      duration: 1,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: el,
-        start: "top 86%",
-      },
-    }
-  );
-});
-
-const clock = new THREE.Clock();
-function renderLoop() {
-  requestAnimationFrame(renderLoop);
-
-  const t = clock.getElapsedTime();
-  const motionX = mouse.x * 0.35;
-  const motionY = -mouse.y * 0.22;
-
-  // Floating + slow spin keeps the scene alive even while not scrolling.
-  portfolioGroup.position.y = Math.sin(t * 0.8) * 0.1;
-  portfolioGroup.rotation.y += (motionX + portfolioProgress * 0.22 - portfolioGroup.rotation.y) * 0.04;
-  portfolioGroup.rotation.x += (motionY - portfolioGroup.rotation.x) * 0.05;
-
-  camera.position.x += (mouse.x * 0.55 + portfolioProgress * 0.25 - camera.position.x) * 0.06;
-  camera.position.y += (0.15 + -mouse.y * 0.3 - portfolioProgress * 0.1 - camera.position.y) * 0.06;
-  camera.position.z += (6 - portfolioProgress * 1.25 - camera.position.z) * 0.06;
-  camera.lookAt(cameraTarget);
-
-  composer.render();
-}
-
-renderLoop();
-
-window.addEventListener("load", () => {
-  // Startup reveal: loading overlay fades out and content fades in.
-  gsap.delayedCall(0.45, () => {
+  function revealApp() {
+    if (!loadingScreen || !appRoot) return;
     loadingScreen.classList.add("hide");
     appRoot.classList.remove("hidden-on-load");
-    gsap.fromTo(appRoot, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power2.out" });
-  });
-});
+    if (window.gsap) {
+      window.gsap.fromTo(appRoot, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" });
+    } else {
+      appRoot.style.opacity = "1";
+    }
+  }
 
-if (form) {
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const button = form.querySelector("button");
-    const originalText = button.textContent;
-    button.textContent = "Message Sent ✓";
-    button.disabled = true;
+  // Never get stuck on loading screen.
+  window.setTimeout(revealApp, 1800);
 
-    setTimeout(() => {
-      button.textContent = originalText;
-      button.disabled = false;
-      form.reset();
-    }, 1800);
+  const hasThree = !!window.THREE;
+  const hasGsap = !!window.gsap;
+
+  if (!hasThree || !hasGsap) {
+    revealApp();
+    if (projectStep) {
+      projectStep.textContent = "3D libraries failed to load. Showing website content without 3D animations.";
+    }
+    setupForm();
+    return;
+  }
+
+  const THREE = window.THREE;
+  const gsap = window.gsap;
+  const ScrollTrigger = window.ScrollTrigger;
+  if (ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color("#0a0a0a");
+  scene.fog = new THREE.Fog("#0a0a0a", 8, 16);
+
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 6);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  threeContainer.appendChild(renderer.domElement);
+
+  const ambient = new THREE.AmbientLight("#9aa7ff", 0.65);
+  const key = new THREE.DirectionalLight("#7edbff", 1.3);
+  key.position.set(2.8, 3.2, 4.4);
+  const rim = new THREE.DirectionalLight("#a275ff", 0.8);
+  rim.position.set(-3.2, -2.3, 2.4);
+  scene.add(ambient, key, rim);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const defs = [
+    {
+      title: "Neon Cube Study",
+      subtitle: "Solid to wireframe to particles",
+      geometry: function () { return new THREE.BoxGeometry(1.9, 1.9, 1.9, 14, 14, 14); },
+      color: "#57e8ff",
+    },
+    {
+      title: "Signal Sphere",
+      subtitle: "Scattered points re-form into smooth volume",
+      geometry: function () { return new THREE.SphereGeometry(1.35, 56, 56); },
+      color: "#a77dff",
+    },
+    {
+      title: "Orbit Torus",
+      subtitle: "Edges tighten into a clean final form",
+      geometry: function () { return new THREE.TorusGeometry(1.12, 0.42, 30, 120); },
+      color: "#7dffad",
+    },
+  ];
+
+  const objects = defs.map(function (item) {
+    const geometry = item.geometry();
+    const basePositions = geometry.attributes.position.array.slice();
+
+    const scatterDirections = new Float32Array(basePositions.length);
+    for (let i = 0; i < scatterDirections.length; i += 3) {
+      const v = new THREE.Vector3((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2).normalize();
+      scatterDirections[i] = v.x;
+      scatterDirections[i + 1] = v.y;
+      scatterDirections[i + 2] = v.z;
+    }
+
+    const meshMaterial = new THREE.MeshStandardMaterial({
+      color: item.color,
+      emissive: item.color,
+      emissiveIntensity: 0.18,
+      roughness: 0.34,
+      metalness: 0.14,
+      transparent: true,
+      opacity: 0,
+      wireframe: false,
+    });
+
+    const mesh = new THREE.Mesh(geometry, meshMaterial);
+
+    const pointsGeometry = geometry.clone();
+    const pointsMaterial = new THREE.PointsMaterial({
+      color: item.color,
+      size: 0.03,
+      transparent: true,
+      opacity: 0,
+      sizeAttenuation: true,
+      depthWrite: false,
+    });
+
+    const points = new THREE.Points(pointsGeometry, pointsMaterial);
+    mesh.visible = false;
+    points.visible = false;
+    group.add(mesh, points);
+
+    return {
+      title: item.title,
+      subtitle: item.subtitle,
+      mesh: mesh,
+      points: points,
+      basePositions: basePositions,
+      scatterDirections: scatterDirections,
+    };
   });
-}
+
+  const mouse = { x: 0, y: 0 };
+  const cameraTarget = new THREE.Vector3(0, 0, 0);
+  let scrollProgress = 0;
+
+  function clamp01(v) {
+    return Math.min(1, Math.max(0, v));
+  }
+
+  function remap(v, min, max) {
+    return clamp01((v - min) / (max - min));
+  }
+
+  function setCopy(index) {
+    if (projectTitle) projectTitle.textContent = objects[index].title;
+    if (projectStep) projectStep.textContent = objects[index].subtitle;
+  }
+
+  function updateScatter(obj, amount, shrink) {
+    const positions = obj.points.geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+      positions[i] = obj.basePositions[i] * shrink + obj.scatterDirections[i] * amount;
+      positions[i + 1] = obj.basePositions[i + 1] * shrink + obj.scatterDirections[i + 1] * amount;
+      positions[i + 2] = obj.basePositions[i + 2] * shrink + obj.scatterDirections[i + 2] * amount;
+    }
+    obj.points.geometry.attributes.position.needsUpdate = true;
+  }
+
+  function hideAll() {
+    objects.forEach(function (obj) {
+      obj.mesh.visible = false;
+      obj.points.visible = false;
+      obj.mesh.material.opacity = 0;
+      obj.mesh.material.wireframe = false;
+      obj.points.material.opacity = 0;
+      obj.mesh.scale.setScalar(1);
+      updateScatter(obj, 0, 1);
+    });
+  }
+
+  function showSolid(index) {
+    hideAll();
+    const obj = objects[index];
+    obj.mesh.visible = true;
+    obj.mesh.material.opacity = 1;
+    setCopy(index);
+  }
+
+  function transition(fromIndex, toIndex, t) {
+    const from = objects[fromIndex];
+    const to = objects[toIndex];
+
+    from.mesh.visible = true;
+    from.points.visible = true;
+    to.mesh.visible = true;
+    to.points.visible = true;
+
+    const outFade = remap(t, 0, 0.35);
+    const outWire = remap(t, 0.2, 0.45);
+    const outPoints = remap(t, 0.35, 0.65);
+
+    const inPoints = remap(t, 0.45, 0.7);
+    const inWire = remap(t, 0.65, 0.85);
+    const inSolid = remap(t, 0.8, 1);
+
+    from.mesh.material.opacity = 1 - outFade;
+    from.mesh.material.wireframe = outWire > 0.08;
+    from.mesh.scale.setScalar(1 - outPoints * 0.24);
+    from.points.material.opacity = outPoints * (1 - inSolid * 0.8);
+    updateScatter(from, outPoints * 2.15, 1 - outPoints * 0.22);
+
+    to.points.material.opacity = inPoints * (1 - inSolid * 0.88);
+    updateScatter(to, (1 - inPoints) * 2.35, 0.72 + inPoints * 0.28);
+    to.mesh.material.wireframe = inWire > 0.1 && inSolid < 0.92;
+    to.mesh.material.opacity = inSolid;
+    to.mesh.scale.setScalar(0.82 + inPoints * 0.18);
+
+    setCopy(t < 0.5 ? fromIndex : toIndex);
+  }
+
+  function updateSceneFromScroll(progress) {
+    const segments = objects.length - 1;
+    const scaled = progress * segments;
+    const segment = Math.floor(scaled);
+
+    if (progress <= 0) {
+      showSolid(0);
+      return;
+    }
+    if (progress >= 0.999) {
+      showSolid(objects.length - 1);
+      return;
+    }
+
+    hideAll();
+    const from = Math.min(segment, segments - 1);
+    const to = Math.min(from + 1, objects.length - 1);
+    transition(from, to, scaled - from);
+  }
+
+  showSolid(0);
+
+  window.addEventListener("pointermove", function (event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = (event.clientY / window.innerHeight) * 2 - 1;
+  });
+
+  window.addEventListener("resize", function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  if (ScrollTrigger) {
+    ScrollTrigger.create({
+      trigger: "#portfolio",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1,
+      onUpdate: function (self) {
+        scrollProgress = self.progress;
+        updateSceneFromScroll(scrollProgress);
+      },
+    });
+
+    gsap.utils.toArray(".fade-up").forEach(function (el) {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 86%",
+          },
+        }
+      );
+    });
+  } else {
+    document.querySelectorAll(".fade-up").forEach(function (el) {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    });
+  }
+
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    group.position.y = Math.sin(t * 0.8) * 0.1;
+    group.rotation.y += (mouse.x * 0.35 + scrollProgress * 0.25 - group.rotation.y) * 0.05;
+    group.rotation.x += (-mouse.y * 0.22 - group.rotation.x) * 0.05;
+
+    camera.position.x += (mouse.x * 0.55 + scrollProgress * 0.24 - camera.position.x) * 0.06;
+    camera.position.y += (0.12 - mouse.y * 0.28 - scrollProgress * 0.08 - camera.position.y) * 0.06;
+    camera.position.z += (6 - scrollProgress * 1.25 - camera.position.z) * 0.06;
+    camera.lookAt(cameraTarget);
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+  revealApp();
+  setupForm();
+
+  function setupForm() {
+    if (!contactForm) return;
+
+    contactForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(contactForm);
+      const payload = {
+        name: String(formData.get("name") || ""),
+        email: String(formData.get("email") || ""),
+        message: String(formData.get("message") || ""),
+        at: new Date().toISOString(),
+      };
+
+      const key = "portfolio_contact_submissions";
+      try {
+        const existing = JSON.parse(localStorage.getItem(key) || "[]");
+        existing.unshift(payload);
+        localStorage.setItem(key, JSON.stringify(existing.slice(0, 20)));
+      } catch (_e) {
+        // ignore storage errors
+      }
+
+      if (formStatus) {
+        formStatus.textContent = "Thanks! Message saved locally (demo mode).";
+      }
+      contactForm.reset();
+    });
+  }
+})();
