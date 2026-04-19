@@ -18,16 +18,16 @@
     }
   }
 
-  // Never get stuck on loading screen.
+  // Hard fallback so loading screen never blocks content.
   window.setTimeout(revealApp, 1800);
 
   const hasThree = !!window.THREE;
   const hasGsap = !!window.gsap;
 
-  if (!hasThree || !hasGsap) {
+  if (!hasThree || !hasGsap || !threeContainer) {
     revealApp();
     if (projectStep) {
-      projectStep.textContent = "3D libraries failed to load. Showing website content without 3D animations.";
+      projectStep.textContent = "3D libraries failed to load. Showing content without 3D objects.";
     }
     setupForm();
     return;
@@ -40,197 +40,102 @@
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#0a0a0a");
-  scene.fog = new THREE.Fog("#0a0a0a", 8, 16);
 
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 6);
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0.4, 8.8);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   threeContainer.appendChild(renderer.domElement);
 
-  const ambient = new THREE.AmbientLight("#9aa7ff", 0.65);
-  const key = new THREE.DirectionalLight("#7edbff", 1.3);
-  key.position.set(2.8, 3.2, 4.4);
-  const rim = new THREE.DirectionalLight("#a275ff", 0.8);
-  rim.position.set(-3.2, -2.3, 2.4);
-  scene.add(ambient, key, rim);
+  const ambient = new THREE.AmbientLight("#a3adff", 0.85);
+  const key = new THREE.DirectionalLight("#7be9ff", 1.2);
+  key.position.set(3, 4, 4);
+  const fill = new THREE.DirectionalLight("#c48dff", 0.9);
+  fill.position.set(-3, -2, 3);
+  scene.add(ambient, key, fill);
 
   const group = new THREE.Group();
   scene.add(group);
 
-  const defs = [
+  const definitions = [
     {
-      title: "Neon Cube Study",
-      subtitle: "Solid to wireframe to particles",
-      geometry: function () { return new THREE.BoxGeometry(1.9, 1.9, 1.9, 14, 14, 14); },
-      color: "#57e8ff",
+      name: "Cube",
+      description: "First object: Cube",
+      geometry: function () {
+        return new THREE.BoxGeometry(1.3, 1.3, 1.3);
+      },
+      color: "#5cecff",
+      x: -3.3,
     },
     {
-      title: "Signal Sphere",
-      subtitle: "Scattered points re-form into smooth volume",
-      geometry: function () { return new THREE.SphereGeometry(1.35, 56, 56); },
-      color: "#a77dff",
+      name: "Circle",
+      description: "Second object: Circle (ring)",
+      geometry: function () {
+        return new THREE.TorusGeometry(0.95, 0.23, 24, 120);
+      },
+      color: "#9f80ff",
+      x: -1.1,
     },
     {
-      title: "Orbit Torus",
-      subtitle: "Edges tighten into a clean final form",
-      geometry: function () { return new THREE.TorusGeometry(1.12, 0.42, 30, 120); },
-      color: "#7dffad",
+      name: "Sphere",
+      description: "Third object: Sphere",
+      geometry: function () {
+        return new THREE.SphereGeometry(0.9, 42, 42);
+      },
+      color: "#7cffb2",
+      x: 1.1,
+    },
+    {
+      name: "Cone",
+      description: "Fourth object: Cone",
+      geometry: function () {
+        return new THREE.ConeGeometry(0.82, 1.6, 36);
+      },
+      color: "#ffd46f",
+      x: 3.3,
     },
   ];
 
-  const objects = defs.map(function (item) {
-    const geometry = item.geometry();
-    const basePositions = geometry.attributes.position.array.slice();
-
-    const scatterDirections = new Float32Array(basePositions.length);
-    for (let i = 0; i < scatterDirections.length; i += 3) {
-      const v = new THREE.Vector3((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2).normalize();
-      scatterDirections[i] = v.x;
-      scatterDirections[i + 1] = v.y;
-      scatterDirections[i + 2] = v.z;
-    }
-
-    const meshMaterial = new THREE.MeshStandardMaterial({
+  const meshes = definitions.map(function (item, index) {
+    const material = new THREE.MeshStandardMaterial({
       color: item.color,
       emissive: item.color,
-      emissiveIntensity: 0.18,
-      roughness: 0.34,
-      metalness: 0.14,
-      transparent: true,
-      opacity: 0,
-      wireframe: false,
+      emissiveIntensity: 0.2,
+      roughness: 0.35,
+      metalness: 0.1,
     });
 
-    const mesh = new THREE.Mesh(geometry, meshMaterial);
+    const mesh = new THREE.Mesh(item.geometry(), material);
+    mesh.position.set(item.x, 0, 0);
+    mesh.userData.index = index;
+    group.add(mesh);
+    return mesh;
+  });
 
-    const pointsGeometry = geometry.clone();
-    const pointsMaterial = new THREE.PointsMaterial({
-      color: item.color,
-      size: 0.03,
-      transparent: true,
-      opacity: 0,
-      sizeAttenuation: true,
-      depthWrite: false,
+  if (projectTitle) {
+    projectTitle.textContent = "Cube → Circle → Sphere → Cone";
+  }
+  if (projectStep) {
+    projectStep.textContent = "Now showing all objects clearly in sequence.";
+  }
+
+  // Simple reveal animation so objects appear one after another.
+  meshes.forEach(function (mesh, i) {
+    mesh.scale.setScalar(0.001);
+    gsap.to(mesh.scale, {
+      x: 1,
+      y: 1,
+      z: 1,
+      delay: 0.2 + i * 0.25,
+      duration: 0.45,
+      ease: "back.out(1.7)",
     });
-
-    const points = new THREE.Points(pointsGeometry, pointsMaterial);
-    mesh.visible = false;
-    points.visible = false;
-    group.add(mesh, points);
-
-    return {
-      title: item.title,
-      subtitle: item.subtitle,
-      mesh: mesh,
-      points: points,
-      basePositions: basePositions,
-      scatterDirections: scatterDirections,
-    };
   });
 
   const mouse = { x: 0, y: 0 };
-  const cameraTarget = new THREE.Vector3(0, 0, 0);
-  let scrollProgress = 0;
-
-  function clamp01(v) {
-    return Math.min(1, Math.max(0, v));
-  }
-
-  function remap(v, min, max) {
-    return clamp01((v - min) / (max - min));
-  }
-
-  function setCopy(index) {
-    if (projectTitle) projectTitle.textContent = objects[index].title;
-    if (projectStep) projectStep.textContent = objects[index].subtitle;
-  }
-
-  function updateScatter(obj, amount, shrink) {
-    const positions = obj.points.geometry.attributes.position.array;
-    for (let i = 0; i < positions.length; i += 3) {
-      positions[i] = obj.basePositions[i] * shrink + obj.scatterDirections[i] * amount;
-      positions[i + 1] = obj.basePositions[i + 1] * shrink + obj.scatterDirections[i + 1] * amount;
-      positions[i + 2] = obj.basePositions[i + 2] * shrink + obj.scatterDirections[i + 2] * amount;
-    }
-    obj.points.geometry.attributes.position.needsUpdate = true;
-  }
-
-  function hideAll() {
-    objects.forEach(function (obj) {
-      obj.mesh.visible = false;
-      obj.points.visible = false;
-      obj.mesh.material.opacity = 0;
-      obj.mesh.material.wireframe = false;
-      obj.points.material.opacity = 0;
-      obj.mesh.scale.setScalar(1);
-      updateScatter(obj, 0, 1);
-    });
-  }
-
-  function showSolid(index) {
-    hideAll();
-    const obj = objects[index];
-    obj.mesh.visible = true;
-    obj.mesh.material.opacity = 1;
-    setCopy(index);
-  }
-
-  function transition(fromIndex, toIndex, t) {
-    const from = objects[fromIndex];
-    const to = objects[toIndex];
-
-    from.mesh.visible = true;
-    from.points.visible = true;
-    to.mesh.visible = true;
-    to.points.visible = true;
-
-    const outFade = remap(t, 0, 0.35);
-    const outWire = remap(t, 0.2, 0.45);
-    const outPoints = remap(t, 0.35, 0.65);
-
-    const inPoints = remap(t, 0.45, 0.7);
-    const inWire = remap(t, 0.65, 0.85);
-    const inSolid = remap(t, 0.8, 1);
-
-    from.mesh.material.opacity = 1 - outFade;
-    from.mesh.material.wireframe = outWire > 0.08;
-    from.mesh.scale.setScalar(1 - outPoints * 0.24);
-    from.points.material.opacity = outPoints * (1 - inSolid * 0.8);
-    updateScatter(from, outPoints * 2.15, 1 - outPoints * 0.22);
-
-    to.points.material.opacity = inPoints * (1 - inSolid * 0.88);
-    updateScatter(to, (1 - inPoints) * 2.35, 0.72 + inPoints * 0.28);
-    to.mesh.material.wireframe = inWire > 0.1 && inSolid < 0.92;
-    to.mesh.material.opacity = inSolid;
-    to.mesh.scale.setScalar(0.82 + inPoints * 0.18);
-
-    setCopy(t < 0.5 ? fromIndex : toIndex);
-  }
-
-  function updateSceneFromScroll(progress) {
-    const segments = objects.length - 1;
-    const scaled = progress * segments;
-    const segment = Math.floor(scaled);
-
-    if (progress <= 0) {
-      showSolid(0);
-      return;
-    }
-    if (progress >= 0.999) {
-      showSolid(objects.length - 1);
-      return;
-    }
-
-    hideAll();
-    const from = Math.min(segment, segments - 1);
-    const to = Math.min(from + 1, objects.length - 1);
-    transition(from, to, scaled - from);
-  }
-
-  showSolid(0);
+  const lookAtTarget = new THREE.Vector3(0, 0, 0);
 
   window.addEventListener("pointermove", function (event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -244,17 +149,6 @@
   });
 
   if (ScrollTrigger) {
-    ScrollTrigger.create({
-      trigger: "#portfolio",
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 1,
-      onUpdate: function (self) {
-        scrollProgress = self.progress;
-        updateSceneFromScroll(scrollProgress);
-      },
-    });
-
     gsap.utils.toArray(".fade-up").forEach(function (el) {
       gsap.fromTo(
         el,
@@ -283,14 +177,19 @@
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
 
-    group.position.y = Math.sin(t * 0.8) * 0.1;
-    group.rotation.y += (mouse.x * 0.35 + scrollProgress * 0.25 - group.rotation.y) * 0.05;
-    group.rotation.x += (-mouse.y * 0.22 - group.rotation.x) * 0.05;
+    group.position.y = Math.sin(t * 0.8) * 0.12;
 
-    camera.position.x += (mouse.x * 0.55 + scrollProgress * 0.24 - camera.position.x) * 0.06;
-    camera.position.y += (0.12 - mouse.y * 0.28 - scrollProgress * 0.08 - camera.position.y) * 0.06;
-    camera.position.z += (6 - scrollProgress * 1.25 - camera.position.z) * 0.06;
-    camera.lookAt(cameraTarget);
+    meshes.forEach(function (mesh, i) {
+      mesh.rotation.x += 0.004 + i * 0.0007;
+      mesh.rotation.y += 0.007 + i * 0.001;
+    });
+
+    group.rotation.y += (mouse.x * 0.2 - group.rotation.y) * 0.04;
+    group.rotation.x += (-mouse.y * 0.08 - group.rotation.x) * 0.04;
+
+    camera.position.x += (mouse.x * 0.45 - camera.position.x) * 0.05;
+    camera.position.y += (0.4 - mouse.y * 0.22 - camera.position.y) * 0.05;
+    camera.lookAt(lookAtTarget);
 
     renderer.render(scene, camera);
   }
