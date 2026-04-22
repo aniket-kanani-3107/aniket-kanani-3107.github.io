@@ -4,7 +4,7 @@
 
 This repository now includes an Excel planner:
 
-- `/home/runner/work/aniket-kanani-3107.github.io/aniket-kanani-3107.github.io/Business_Tax_Planner.xlsx`
+- `Business_Tax_Planner.xlsx`
 
 ### Sheets included
 
