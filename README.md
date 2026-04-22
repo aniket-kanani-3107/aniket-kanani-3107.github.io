@@ -13,10 +13,10 @@ This repository now includes an Excel planner:
    - YTD and predicted KPI summary
    - Tax payment planning cells and alert flags
 2. **Last Year Data**
-   - Monthly manual input table (Apr to Mar)
+   - Monthly manual input table (Apr to Mar) for the immediately previous financial year
 3. **Current Year Data**
    - Monthly manual input table (Apr to Mar)
-   - `Status` column (`Actual` / `Pending`)
+   - `Status` column (`Actual` / `Pending`) to control whether a month uses entered values or model prediction
 4. **All Predictions**
    - Weighted forecasting model
    - Scenario selector (`Base`, `Best`, `Worst`)
@@ -26,7 +26,10 @@ This repository now includes an Excel planner:
 ### How to use
 
 1. Enter prior-year monthly values in **Last Year Data**.
-2. Enter current-year monthly values in **Current Year Data** and set each month status.
-3. Update tax assumptions in **Main (All in One)**.
-4. Optionally adjust forecasting weights and scenario in **All Predictions**.
-5. Review predicted outcomes, payable tax, and monthly payment suggestions.
+2. Enter current-year monthly values in **Current Year Data**.
+3. Set month `Status` in **Current Year Data**:
+   - `Actual`: month is completed and final values are available
+   - `Pending`: month is not completed yet and should be forecasted
+4. Update tax assumptions in **Main (All in One)**.
+5. Optionally adjust forecasting weights and scenario in **All Predictions**.
+6. Review predicted outcomes, payable tax, and monthly payment suggestions.
