@@ -22,21 +22,19 @@
   window.setTimeout(revealApp, 1800);
 
   const hasThree = !!window.THREE;
-  const hasGsap = !!window.gsap;
-
-  if (!hasThree || !hasGsap || !threeContainer) {
+  if (!hasThree || !threeContainer) {
     revealApp();
     if (projectStep) {
-      projectStep.textContent = "3D libraries failed to load. Showing content without 3D objects.";
+      projectStep.textContent = "3D library failed to load. Showing content without 3D objects.";
     }
     setupForm();
     return;
   }
 
   const THREE = window.THREE;
-  const gsap = window.gsap;
+  const gsap = window.gsap || null;
   const ScrollTrigger = window.ScrollTrigger;
-  if (ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#0a0a0a");
@@ -124,14 +122,20 @@
   // Simple reveal animation so objects appear one after another.
   meshes.forEach(function (mesh, i) {
     mesh.scale.setScalar(0.001);
-    gsap.to(mesh.scale, {
-      x: 1,
-      y: 1,
-      z: 1,
-      delay: 0.2 + i * 0.25,
-      duration: 0.45,
-      ease: "back.out(1.7)",
-    });
+    if (gsap) {
+      gsap.to(mesh.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+        delay: 0.2 + i * 0.25,
+        duration: 0.45,
+        ease: "back.out(1.7)",
+      });
+    } else {
+      window.setTimeout(function () {
+        mesh.scale.setScalar(1);
+      }, 200 + i * 250);
+    }
   });
 
   const mouse = { x: 0, y: 0 };
@@ -148,7 +152,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  if (ScrollTrigger) {
+  if (gsap && ScrollTrigger) {
     gsap.utils.toArray(".fade-up").forEach(function (el) {
       gsap.fromTo(
         el,
