@@ -3,6 +3,7 @@ const path = require('path');
 const fsp = require('fs/promises');
 const os = require('os');
 const chokidar = require('chokidar');
+const rateLimit = require('express-rate-limit');
 const { randomUUID } = require('crypto');
 const {
   ensureAppFiles,
@@ -41,28 +42,10 @@ const tmpExportDir = path.join(os.tmpdir(), 'accounting-app-exports');
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-function createRateLimiter({ windowMs, max }) {
-  const hits = new Map();
-  return (req, res, next) => {
-    const key = req.ip || 'unknown';
-    const now = Date.now();
-    const entry = hits.get(key) || { count: 0, start: now };
-    if (now - entry.start > windowMs) {
-      entry.count = 0;
-      entry.start = now;
-    }
-    entry.count += 1;
-    hits.set(key, entry);
-    if (entry.count > max) {
-      return res.status(429).json({ error: 'Too many requests. Try again later.' });
-    }
-    return next();
-  };
-}
-
-const exportRateLimiter = createRateLimiter({ windowMs: 60_000, max: 30 });
-const backupRateLimiter = createRateLimiter({ windowMs: 60_000, max: 20 });
-const fallbackRateLimiter = createRateLimiter({ windowMs: 60_000, max: 120 });
+const exportRateLimiter = rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: true, legacyHeaders: false });
+const backupRateLimiter = rateLimit({ windowMs: 60_000, limit: 20, standardHeaders: true, legacyHeaders: false });
+const fallbackRateLimiter = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: true, legacyHeaders: false });
+const auditRateLimiter = rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: true, legacyHeaders: false });
 
 async function authMiddleware(req, res, next) {
   if (!req.path.startsWith('/api')) return next();
@@ -397,7 +380,7 @@ app.get('/api/companies/:companyId/export/:reportName.xlsx', exportRateLimiter, 
   }
 });
 
-app.get('/api/companies/:companyId/audit', companyContext, async (req, res) => {
+app.get('/api/companies/:companyId/audit', auditRateLimiter, companyContext, async (req, res) => {
   res.json(await loadAudit(req.company.id));
 });
 

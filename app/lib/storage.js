@@ -36,8 +36,7 @@ async function ensureAppFiles() {
 
 async function readJson(filePath, fallback = null) {
   try {
-    const resolved = path.resolve(filePath);
-    if (!resolved.startsWith(APP_DIR + path.sep)) return fallback;
+    const resolved = await resolveSafePath(filePath, APP_DIR);
     const content = await fsp.readFile(resolved, 'utf-8');
     return JSON.parse(content);
   } catch {
@@ -46,8 +45,7 @@ async function readJson(filePath, fallback = null) {
 }
 
 async function writeJson(filePath, data) {
-  const resolved = path.resolve(filePath);
-  if (!resolved.startsWith(APP_DIR + path.sep)) throw new Error('Invalid write path.');
+  const resolved = await resolveSafePath(filePath, APP_DIR, { allowNonExistingFile: true });
   await fsp.writeFile(resolved, JSON.stringify(data, null, 2));
 }
 
@@ -234,10 +232,29 @@ async function listBackups(companyId) {
 function normalizeLinkedSourcePath(rawPath) {
   if (!rawPath) return null;
   const resolved = path.resolve(String(rawPath).trim());
-  if (!resolved.startsWith(LINKED_SOURCES_DIR + path.sep)) {
-    throw new Error(`Linked source must be inside: ${LINKED_SOURCES_DIR}`);
-  }
+  const relative = path.relative(LINKED_SOURCES_DIR, resolved);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) throw new Error(`Linked source must be inside: ${LINKED_SOURCES_DIR}`);
   return resolved;
+}
+
+async function resolveSafePath(targetPath, rootPath, options = {}) {
+  const { allowNonExistingFile = false } = options;
+  const rootReal = await fsp.realpath(rootPath);
+  const absolute = path.resolve(String(targetPath || ''));
+
+  let candidateReal;
+  if (allowNonExistingFile) {
+    const directoryReal = await fsp.realpath(path.dirname(absolute));
+    candidateReal = path.join(directoryReal, path.basename(absolute));
+  } else {
+    candidateReal = await fsp.realpath(absolute);
+  }
+
+  const relative = path.relative(rootReal, candidateReal);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) {
+    throw new Error('Invalid path.');
+  }
+  return candidateReal;
 }
 
 module.exports = {

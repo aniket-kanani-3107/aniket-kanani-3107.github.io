@@ -19,10 +19,17 @@ function rowValue(row, map, key) {
 
 async function parseLinkedWorkbook(filePath) {
   if (!fs.existsSync(filePath)) throw new Error('Linked file not found.');
+  const stat = fs.statSync(filePath);
+  if (stat.size > 10 * 1024 * 1024) throw new Error('Linked file is too large (max 10MB).');
   const ext = path.extname(filePath).toLowerCase();
 
   if (ext === '.json') {
-    const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    let content;
+    try {
+      content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    } catch {
+      throw new Error('Invalid linked JSON format.');
+    }
     return {
       ledgers: Array.isArray(content.ledgers) ? content.ledgers : [],
       vouchers: Array.isArray(content.vouchers) ? content.vouchers : [],

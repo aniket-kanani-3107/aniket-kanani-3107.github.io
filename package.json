@@ -13,6 +13,7 @@
   "dependencies": {
     "chokidar": "^5.0.0",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1",
     "read-excel-file": "^9.0.6",
     "write-excel-file": "^4.0.2"
   }
