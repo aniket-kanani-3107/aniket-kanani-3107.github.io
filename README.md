@@ -15,6 +15,7 @@ A Node.js + Express accounting foundation that follows a base-to-enhanced roadma
 /app
   /backups
   /companies
+  /linked-sources
   /config
     companies.json
     users.json
@@ -53,7 +54,7 @@ Default credentials:
 
 ## Linked data sync
 
-At company creation/update, set `sourceFilePath` as an absolute path to `.json` or `.xlsx`.
+At company creation/update, set `sourceFilePath` to a file inside `app/linked-sources` (`.json` or `.xlsx`).
 
 For `.xlsx`, optional sheets:
 

@@ -6,6 +6,7 @@ const { randomUUID } = require('crypto');
 const APP_DIR = path.resolve(__dirname, '..');
 const CONFIG_DIR = path.join(APP_DIR, 'config');
 const COMPANIES_DIR = path.join(APP_DIR, 'companies');
+const LINKED_SOURCES_DIR = path.join(APP_DIR, 'linked-sources');
 const AUDIT_DIR = path.join(APP_DIR, 'data', 'audit');
 const BACKUP_DIR = path.join(APP_DIR, 'backups');
 const REGISTRY_FILE = path.join(CONFIG_DIR, 'companies.json');
@@ -23,7 +24,7 @@ async function ensureFile(filePath, defaultValue) {
 }
 
 async function ensureAppFiles() {
-  await Promise.all([ensureDir(CONFIG_DIR), ensureDir(COMPANIES_DIR), ensureDir(AUDIT_DIR), ensureDir(BACKUP_DIR)]);
+  await Promise.all([ensureDir(CONFIG_DIR), ensureDir(COMPANIES_DIR), ensureDir(LINKED_SOURCES_DIR), ensureDir(AUDIT_DIR), ensureDir(BACKUP_DIR)]);
   await ensureFile(REGISTRY_FILE, []);
   await ensureFile(USERS_FILE, [{ username: 'admin', password: 'admin123', role: 'admin' }]);
   await ensureFile(TAX_FILE, {
@@ -35,7 +36,9 @@ async function ensureAppFiles() {
 
 async function readJson(filePath, fallback = null) {
   try {
-    const content = await fsp.readFile(filePath, 'utf-8');
+    const resolved = path.resolve(filePath);
+    if (!resolved.startsWith(APP_DIR + path.sep)) return fallback;
+    const content = await fsp.readFile(resolved, 'utf-8');
     return JSON.parse(content);
   } catch {
     return fallback;
@@ -43,7 +46,9 @@ async function readJson(filePath, fallback = null) {
 }
 
 async function writeJson(filePath, data) {
-  await fsp.writeFile(filePath, JSON.stringify(data, null, 2));
+  const resolved = path.resolve(filePath);
+  if (!resolved.startsWith(APP_DIR + path.sep)) throw new Error('Invalid write path.');
+  await fsp.writeFile(resolved, JSON.stringify(data, null, 2));
 }
 
 function normalizeLedgerName(name) {
@@ -123,13 +128,14 @@ function createCompanyTemplate(company) {
 
 async function createCompany(payload) {
   const registry = await loadRegistry();
+  const sourceFilePath = normalizeLinkedSourcePath(payload.sourceFilePath);
   const company = {
     id: randomUUID(),
     name: String(payload.name || '').trim(),
     code: String(payload.code || '').trim().toUpperCase(),
     financialYear: String(payload.financialYear || '').trim() || '2026-2027',
     baseCurrency: String(payload.baseCurrency || 'INR').trim().toUpperCase(),
-    sourceFilePath: payload.sourceFilePath || null,
+    sourceFilePath,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -154,7 +160,11 @@ async function updateCompany(companyId, patch) {
   const registry = await loadRegistry();
   const index = registry.findIndex((x) => x.id === companyId);
   if (index === -1) throw new Error('Company not found.');
-  registry[index] = { ...registry[index], ...patch, updatedAt: new Date().toISOString() };
+  const updatedPatch = { ...patch };
+  if (Object.prototype.hasOwnProperty.call(updatedPatch, 'sourceFilePath')) {
+    updatedPatch.sourceFilePath = normalizeLinkedSourcePath(updatedPatch.sourceFilePath);
+  }
+  registry[index] = { ...registry[index], ...updatedPatch, updatedAt: new Date().toISOString() };
   await saveRegistry(registry);
   return registry[index];
 }
@@ -209,7 +219,9 @@ async function createBackup(companyId) {
 }
 
 async function restoreBackup(companyId, backupFileName) {
-  const sourcePath = path.join(BACKUP_DIR, backupFileName);
+  const safeName = path.basename(String(backupFileName || ''));
+  if (!safeName.endsWith('.json')) throw new Error('Invalid backup file name.');
+  const sourcePath = path.join(BACKUP_DIR, safeName);
   if (!fs.existsSync(sourcePath)) throw new Error('Backup file not found.');
   await fsp.copyFile(sourcePath, companyFilePath(companyId));
 }
@@ -219,10 +231,20 @@ async function listBackups(companyId) {
   return files.filter((file) => file.startsWith(`${companyId}-`)).sort().reverse();
 }
 
+function normalizeLinkedSourcePath(rawPath) {
+  if (!rawPath) return null;
+  const resolved = path.resolve(String(rawPath).trim());
+  if (!resolved.startsWith(LINKED_SOURCES_DIR + path.sep)) {
+    throw new Error(`Linked source must be inside: ${LINKED_SOURCES_DIR}`);
+  }
+  return resolved;
+}
+
 module.exports = {
   APP_DIR,
   CONFIG_DIR,
   COMPANIES_DIR,
+  LINKED_SOURCES_DIR,
   REGISTRY_FILE,
   ensureAppFiles,
   readJson,
