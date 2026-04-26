@@ -1,0 +1,19 @@
+{
+  "name": "aniket-kanani-3107.github.io",
+  "version": "1.0.0",
+  "description": "Tally-style offline accounting foundation app",
+  "main": "app/server.js",
+  "scripts": {
+    "start": "node app/server.js",
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "express": "^5.2.1",
+    "read-excel-file": "^9.0.6",
+    "write-excel-file": "^4.0.2"
+  }
+}

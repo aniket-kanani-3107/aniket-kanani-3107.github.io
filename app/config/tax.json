@@ -1,0 +1,10 @@
+{
+  "defaultTaxLedger": "GST Output",
+  "rates": [
+    {
+      "name": "GST18",
+      "rate": 18
+    }
+  ],
+  "mode": "exclusive"
+}

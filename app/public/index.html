@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tally-Style Accounting Base</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Offline Accounting Base → Enhanced</h1>
+      <p>Company, Ledger, Voucher, Reports, Export, Backup</p>
+    </header>
+
+    <section class="card">
+      <h2>Authentication</h2>
+      <div class="row">
+        <label>User <input id="auth-user" value="admin" /></label>
+        <label>Password <input id="auth-password" type="password" value="admin123" /></label>
+      </div>
+      <small>All API calls use x-user and x-password headers.</small>
+    </section>
+
+    <section class="grid-2">
+      <section class="card">
+        <h2>Create Company</h2>
+        <form id="company-form">
+          <label>Name <input name="name" required /></label>
+          <label>Code <input name="code" required /></label>
+          <label>Financial Year <input name="financialYear" value="2026-2027" /></label>
+          <label>Currency <input name="baseCurrency" value="INR" /></label>
+          <label>Linked File Path (optional) <input name="sourceFilePath" placeholder="/absolute/path/company.xlsx" /></label>
+          <button type="submit">Create Company</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Select Company</h2>
+        <select id="company-select"></select>
+        <div class="row">
+          <button id="sync-company" type="button">Sync Linked Data</button>
+          <button id="backup-company" type="button">Create Backup</button>
+        </div>
+        <pre id="company-meta"></pre>
+      </section>
+    </section>
+
+    <section class="grid-2">
+      <section class="card">
+        <h2>Add Ledger</h2>
+        <form id="ledger-form">
+          <label>Name <input name="name" required /></label>
+          <label>Type
+            <select name="type">
+              <option>Asset</option>
+              <option>Liability</option>
+              <option>Income</option>
+              <option>Expense</option>
+              <option>Equity</option>
+            </select>
+          </label>
+          <label>Group <input name="group" value="General" /></label>
+          <label>Opening Balance <input name="openingBalance" type="number" step="0.01" value="0" /></label>
+          <label>Opening Type
+            <select name="openingType">
+              <option value="debit">Debit</option>
+              <option value="credit">Credit</option>
+            </select>
+          </label>
+          <label><input name="isParty" type="checkbox" /> Party Ledger</label>
+          <button type="submit">Add Ledger</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Ledgers</h2>
+        <table id="ledger-table"></table>
+      </section>
+    </section>
+
+    <section class="grid-2">
+      <section class="card">
+        <h2>Add Voucher</h2>
+        <form id="voucher-form">
+          <label>Date <input name="date" type="date" required /></label>
+          <label>Type
+            <select name="type">
+              <option>Journal</option>
+              <option>Payment</option>
+              <option>Receipt</option>
+              <option>Sales</option>
+              <option>Purchase</option>
+            </select>
+          </label>
+          <label>Narration <input name="narration" /></label>
+          <label>Debit Ledger <input name="debitLedger" required /></label>
+          <label>Credit Ledger <input name="creditLedger" required /></label>
+          <label>Amount <input name="amount" type="number" step="0.01" required /></label>
+          <label>Tax Rate % (optional) <input name="taxRate" type="number" step="0.01" value="0" /></label>
+          <button type="submit">Post Voucher</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Vouchers</h2>
+        <table id="voucher-table"></table>
+      </section>
+    </section>
+
+    <section class="card">
+      <h2>Reports</h2>
+      <div class="row">
+        <label>From <input id="filter-from" type="date" /></label>
+        <label>To <input id="filter-to" type="date" /></label>
+        <button data-report="trial-balance" class="report-btn" type="button">Trial Balance</button>
+        <button data-report="pnl" class="report-btn" type="button">P&amp;L</button>
+        <button data-report="balance-sheet" class="report-btn" type="button">Balance Sheet</button>
+        <button data-report="dashboard" class="report-btn" type="button">Dashboard</button>
+        <button data-report="outstanding-aging" class="report-btn" type="button">Outstanding Aging</button>
+        <button id="export-vouchers" type="button">Export Vouchers</button>
+      </div>
+      <table id="report-table"></table>
+      <canvas id="report-chart" height="100"></canvas>
+    </section>
+
+    <section class="card">
+      <h2>Activity</h2>
+      <pre id="status"></pre>
+    </section>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
