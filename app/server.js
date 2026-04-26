@@ -419,7 +419,7 @@ app.post('/api/companies/:companyId/restore', requireRole('admin'), companyConte
   }
 });
 
-app.get('*', (_req, res) => {
+app.use((_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
