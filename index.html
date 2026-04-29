@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Desktop Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <header class="dashboard__header">
+      <div>
+        <h1>My Desktop Dashboard</h1>
+        <p class="subtitle">Everything I need when I open my laptop.</p>
+      </div>
+      <div class="header-meta">
+        <div class="date-label">Today</div>
+        <div id="date-display" class="date-display">--</div>
+      </div>
+    </header>
+
+    <main class="dashboard__grid">
+      <section class="card" id="finance">
+        <div class="card__header">
+          <h2>Finance Updates</h2>
+          <p class="muted">Quick notes for the biggest updates in Germany and India.</p>
+        </div>
+        <div class="split">
+          <div class="panel">
+            <h3>Germany</h3>
+            <textarea id="finance-germany" placeholder="Add today's big finance updates for Germany..."></textarea>
+            <div class="panel__meta">
+              <span id="finance-germany-updated" class="muted">Not saved yet</span>
+              <button class="primary" data-action="save-finance" data-region="germany">Save</button>
+            </div>
+            <div class="link-list">
+              <a href="https://www.tagesschau.de/wirtschaft/" target="_blank" rel="noreferrer">Tagesschau Wirtschaft</a>
+              <a href="https://www.handelsblatt.com/" target="_blank" rel="noreferrer">Handelsblatt</a>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>India</h3>
+            <textarea id="finance-india" placeholder="Add today's big finance updates for India..."></textarea>
+            <div class="panel__meta">
+              <span id="finance-india-updated" class="muted">Not saved yet</span>
+              <button class="primary" data-action="save-finance" data-region="india">Save</button>
+            </div>
+            <div class="link-list">
+              <a href="https://www.livemint.com/market" target="_blank" rel="noreferrer">Mint Markets</a>
+              <a href="https://www.moneycontrol.com/news/business/" target="_blank" rel="noreferrer">Moneycontrol</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="time">
+        <div class="card__header">
+          <h2>Time Zones</h2>
+          <p class="muted">24-hour and 12-hour time for Germany and India.</p>
+        </div>
+        <div class="time-grid">
+          <div class="time-card">
+            <h3>Germany (Europe/Berlin)</h3>
+            <div class="time-row">
+              <span>24-hour</span>
+              <strong id="time-de-24">--:--</strong>
+            </div>
+            <div class="time-row">
+              <span>12-hour</span>
+              <strong id="time-de-12">--:-- --</strong>
+            </div>
+          </div>
+          <div class="time-card">
+            <h3>India (Asia/Kolkata)</h3>
+            <div class="time-row">
+              <span>24-hour</span>
+              <strong id="time-in-24">--:--</strong>
+            </div>
+            <div class="time-row">
+              <span>12-hour</span>
+              <strong id="time-in-12">--:-- --</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="schedule">
+        <div class="card__header">
+          <h2>Today's Schedule</h2>
+          <p class="muted">Upload a CSV exported from Excel for your job and university lectures.</p>
+        </div>
+        <div class="schedule-controls">
+          <input id="schedule-file" type="file" accept=".csv" />
+          <button id="schedule-clear" class="ghost" type="button">Clear Schedule</button>
+          <span id="schedule-status" class="muted">No schedule loaded.</span>
+        </div>
+        <div class="table-wrapper" id="schedule-table">
+          <div class="empty-state">Upload a CSV file to see your schedule here.</div>
+        </div>
+      </section>
+
+      <section class="card" id="project">
+        <div class="card__header">
+          <h2>Current Project Progress</h2>
+          <p class="muted">Track the status of your current work project.</p>
+        </div>
+        <div class="progress-summary">
+          <div>
+            <div class="muted">Completion</div>
+            <div id="project-progress-text" class="progress-text">0% complete</div>
+          </div>
+          <progress id="project-progress" value="0" max="100">0%</progress>
+        </div>
+        <div class="task-entry">
+          <input id="project-task-name" type="text" placeholder="Add a new task or milestone" />
+          <select id="project-task-status">
+            <option value="not-started">Not started</option>
+            <option value="in-progress" selected>In progress</option>
+            <option value="done">Done</option>
+          </select>
+          <button id="project-add" class="primary" type="button">Add</button>
+        </div>
+        <div id="project-list" class="task-list"></div>
+      </section>
+
+      <section class="card" id="spotify">
+        <div class="card__header">
+          <h2>Spotify Quick Play</h2>
+          <p class="muted">Tap play to start music instantly.</p>
+        </div>
+        <iframe
+          class="spotify-player"
+          src="https://open.spotify.com/embed/track/7ouMYWpwJ422jRcDASZB7P?utm_source=generator"
+          width="100%"
+          height="80"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title="Spotify player"
+        ></iframe>
+        <p class="hint">Replace the track link in <code>index.html</code> with your favorite playlist or album.</p>
+      </section>
+
+      <section class="card" id="accounts">
+        <div class="card__header">
+          <h2>Mail IDs &amp; Google Drive</h2>
+          <p class="muted">Save your mail IDs and quick Drive links.</p>
+        </div>
+        <div class="account-grid">
+          <div class="account-row">
+            <label>Personal</label>
+            <input id="account-personal-email" type="email" placeholder="personal@email.com" />
+            <input id="account-personal-drive" type="url" placeholder="https://drive.google.com/" />
+          </div>
+          <div class="account-row">
+            <label>Work</label>
+            <input id="account-work-email" type="email" placeholder="work@email.com" />
+            <input id="account-work-drive" type="url" placeholder="https://drive.google.com/" />
+          </div>
+          <div class="account-row">
+            <label>University</label>
+            <input id="account-uni-email" type="email" placeholder="student@..." />
+            <input id="account-uni-drive" type="url" placeholder="https://drive.google.com/" />
+          </div>
+        </div>
+        <div class="panel__meta">
+          <span id="account-status" class="muted">Not saved yet</span>
+          <button id="account-save" class="primary" type="button">Save Accounts</button>
+        </div>
+      </section>
+
+      <section class="card" id="university">
+        <div class="card__header">
+          <h2>TU Chemnitz Links</h2>
+          <p class="muted">Direct logins for university services.</p>
+        </div>
+        <div class="link-list">
+          <a href="https://mail.tu-chemnitz.de/" target="_blank" rel="noreferrer">TU Chemnitz Mail</a>
+          <a href="https://bildungsportal.sachsen.de/opal" target="_blank" rel="noreferrer">OPAL</a>
+          <a href="https://sbservice.tu-chemnitz.de/" target="_blank" rel="noreferrer">SB-Service</a>
+        </div>
+      </section>
+
+      <section class="card" id="search">
+        <div class="card__header">
+          <h2>Quick Search</h2>
+          <p class="muted">Search instantly on ChatGPT, Gemini, Antigravity, and GitHub.</p>
+        </div>
+        <div class="search-bar">
+          <input id="search-query" type="text" placeholder="Type your search..." />
+          <button class="primary" data-engine="chatgpt" type="button">ChatGPT</button>
+          <button class="primary" data-engine="gemini" type="button">Gemini</button>
+          <button class="primary" data-engine="antigravity" type="button">Antigravity</button>
+          <button class="primary" data-engine="github" type="button">GitHub</button>
+        </div>
+        <p class="hint">Tip: Use short keywords for faster results.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
