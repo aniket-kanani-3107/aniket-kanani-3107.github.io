@@ -3,620 +3,379 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Avyra — The Living VR Social Universe</title>
-  <meta name="description" content="Avyra is a browser-first, WebXR-powered social metaverse. Build, explore, earn — no downloads required." />
-  <style>
-    /* ── Reset & base ─────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy:    #0d1b2a;
-      --dark:    #111827;
-      --mid:     #1e2d3d;
-      --accent:  #4a90d9;
-      --gold:    #f5c242;
-      --text:    #e2e8f0;
-      --muted:   #94a3b8;
-      --border:  rgba(74,144,217,0.25);
-      --radius:  12px;
-      --glow: 0 0 30px rgba(74,144,217,0.35);
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--navy);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    /* ── Nav ─────────────────────────────────────────────── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(13,27,42,0.85);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 62px;
-    }
-    .nav-logo {
-      font-size: 1.5rem; font-weight: 800; letter-spacing: .12em;
-      color: var(--accent);
-    }
-    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
-    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; transition: color .2s; }
-    .nav-links a:hover { color: var(--accent); text-decoration: none; }
-    .nav-cta {
-      background: var(--accent); color: #fff; padding: .45rem 1.2rem;
-      border-radius: 6px; font-size: .88rem; font-weight: 600;
-      transition: opacity .2s;
-    }
-    .nav-cta:hover { opacity: .85; text-decoration: none; }
-
-    /* ── Hero ────────────────────────────────────────────── */
-    #hero {
-      min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-      padding: 5rem 2rem 4rem;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,144,217,0.18) 0%, transparent 70%),
-        linear-gradient(180deg, #0d1b2a 0%, #0a1520 100%);
-    }
-    .grid-bg {
-      position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(74,144,217,0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(74,144,217,0.07) 1px, transparent 1px);
-      background-size: 48px 48px;
-    }
-    .hero-content { position: relative; text-align: center; max-width: 780px; }
-    .hero-badge {
-      display: inline-block; margin-bottom: 1.6rem;
-      background: rgba(74,144,217,0.15); border: 1px solid var(--border);
-      color: var(--accent); padding: .3rem 1rem; border-radius: 99px;
-      font-size: .8rem; font-weight: 600; letter-spacing: .08em;
-    }
-    h1.title {
-      font-size: clamp(3.5rem, 10vw, 7rem);
-      font-weight: 900; letter-spacing: .08em;
-      background: linear-gradient(135deg, #e2e8f0 30%, var(--accent) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-      margin-bottom: .6rem;
-    }
-    .hero-sub {
-      font-size: 1.2rem; color: var(--muted); margin-bottom: .5rem;
-      font-style: italic;
-    }
-    .hero-tagline {
-      font-size: 1.05rem; color: var(--text); margin-bottom: 2.4rem; max-width: 560px; margin-inline: auto;
-    }
-    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn-primary {
-      background: var(--accent); color: #fff; padding: .75rem 2rem;
-      border-radius: 8px; font-weight: 700; font-size: 1rem;
-      transition: transform .2s, box-shadow .2s;
-      box-shadow: var(--glow);
-    }
-    .btn-primary:hover { transform: translateY(-2px); text-decoration: none; }
-    .btn-outline {
-      border: 1.5px solid var(--border); color: var(--text); padding: .74rem 2rem;
-      border-radius: 8px; font-weight: 600; font-size: 1rem;
-      transition: border-color .2s, color .2s;
-    }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
-    .hero-meta {
-      margin-top: 3.5rem; display: flex; gap: 3rem; justify-content: center;
-      flex-wrap: wrap;
-    }
-    .hero-stat { text-align: center; }
-    .hero-stat .num { font-size: 1.9rem; font-weight: 800; color: var(--accent); }
-    .hero-stat .label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
-
-    /* ── Section wrapper ─────────────────────────────────── */
-    section { padding: 6rem 2rem; }
-    .container { max-width: 1080px; margin: 0 auto; }
-    .section-label {
-      font-size: .78rem; font-weight: 700; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: .6rem;
-    }
-    h2.section-title {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 800; margin-bottom: 1rem;
-      color: #fff;
-    }
-    .section-desc { color: var(--muted); max-width: 600px; margin-bottom: 3rem; font-size: 1.05rem; }
-
-    /* ── Pillars grid ────────────────────────────────────── */
-    #pillars { background: var(--dark); }
-    .pillar-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-    }
-    .pillar-card {
-      background: var(--mid); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.8rem 1.5rem;
-      transition: transform .2s, box-shadow .2s;
-    }
-    .pillar-card:hover { transform: translateY(-4px); box-shadow: var(--glow); }
-    .pillar-icon { font-size: 2rem; margin-bottom: .8rem; }
-    .pillar-name { font-weight: 700; font-size: 1.05rem; margin-bottom: .4rem; }
-    .pillar-text { color: var(--muted); font-size: .9rem; }
-
-    /* ── World Zones ─────────────────────────────────────── */
-    #zones { background: var(--navy); }
-    .zones-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.4rem;
-    }
-    .zone-card {
-      background: var(--mid); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.6rem;
-      position: relative; overflow: hidden;
-    }
-    .zone-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--gold));
-    }
-    .zone-phase {
-      position: absolute; top: 1rem; right: 1rem;
-      font-size: .72rem; font-weight: 700; color: var(--accent);
-      background: rgba(74,144,217,0.12); padding: .2rem .6rem;
-      border-radius: 99px; border: 1px solid var(--border);
-    }
-    .zone-icon { font-size: 1.8rem; margin-bottom: .6rem; }
-    .zone-name { font-weight: 700; font-size: 1rem; margin-bottom: .4rem; }
-    .zone-cap { font-size: .78rem; color: var(--gold); margin-bottom: .5rem; }
-    .zone-desc { color: var(--muted); font-size: .88rem; }
-
-    /* ── Economy ─────────────────────────────────────────── */
-    #economy { background: var(--dark); }
-    .economy-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    @media (max-width: 640px) { .economy-cols { grid-template-columns: 1fr; } }
-    .currency-card {
-      background: var(--mid); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.8rem;
-    }
-    .currency-card .cur-sym { font-size: 2.2rem; margin-bottom: .6rem; }
-    .currency-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: .3rem; }
-    .currency-card p { color: var(--muted); font-size: .9rem; margin-bottom: 1rem; }
-    .tag-list { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .tag {
-      background: rgba(74,144,217,0.12); border: 1px solid var(--border);
-      color: var(--accent); padding: .2rem .7rem; border-radius: 99px;
-      font-size: .78rem; font-weight: 600;
-    }
-
-    /* ── Tech Stack ──────────────────────────────────────── */
-    #tech { background: var(--navy); }
-    .tech-table-wrap { overflow-x: auto; border-radius: var(--radius); }
-    table {
-      width: 100%; border-collapse: collapse;
-      background: var(--mid); border-radius: var(--radius); overflow: hidden;
-      font-size: .9rem;
-    }
-    thead tr { background: var(--accent); }
-    thead th { color: #fff; padding: .8rem 1.2rem; text-align: left; font-weight: 700; }
-    tbody tr { border-bottom: 1px solid var(--border); }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(74,144,217,0.07); }
-    tbody td { padding: .75rem 1.2rem; color: var(--muted); }
-    tbody td:first-child { color: var(--text); font-weight: 600; }
-
-    /* ── Roadmap ─────────────────────────────────────────── */
-    #roadmap { background: var(--dark); }
-    .timeline { position: relative; padding-left: 2rem; }
-    .timeline::before {
-      content: ''; position: absolute; left: .55rem; top: 0; bottom: 0;
-      width: 2px; background: var(--border);
-    }
-    .tl-item { position: relative; margin-bottom: 2.4rem; }
-    .tl-dot {
-      position: absolute; left: -2rem; top: .35rem;
-      width: 14px; height: 14px; border-radius: 50%;
-      background: var(--accent); border: 2px solid var(--navy);
-      box-shadow: 0 0 10px rgba(74,144,217,0.6);
-    }
-    .tl-phase {
-      font-size: .75rem; font-weight: 700; color: var(--accent);
-      text-transform: uppercase; letter-spacing: .1em; margin-bottom: .25rem;
-    }
-    .tl-title { font-weight: 700; font-size: 1.05rem; margin-bottom: .3rem; }
-    .tl-desc { color: var(--muted); font-size: .9rem; }
-    .tl-date {
-      display: inline-block; margin-top: .4rem;
-      font-size: .78rem; color: var(--gold);
-      background: rgba(245,194,66,0.1); padding: .15rem .6rem; border-radius: 99px;
-    }
-
-    /* ── GDD Download ────────────────────────────────────── */
-    #gdd { background: var(--navy); }
-    .gdd-box {
-      background: linear-gradient(135deg, var(--mid) 0%, rgba(74,144,217,0.1) 100%);
-      border: 1px solid var(--border); border-radius: 16px;
-      padding: 3rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
-    }
-    .gdd-icon { font-size: 3.5rem; flex-shrink: 0; }
-    .gdd-text h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: .4rem; }
-    .gdd-text p { color: var(--muted); margin-bottom: 1.2rem; max-width: 480px; }
-    .gdd-stats { display: flex; gap: 2rem; flex-wrap: wrap; }
-    .gdd-stat { text-align: center; }
-    .gdd-stat .n { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
-    .gdd-stat .l { font-size: .78rem; color: var(--muted); }
-
-    /* ── Team / contact ──────────────────────────────────── */
-    #team { background: var(--dark); }
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.4rem; }
-    .team-card {
-      background: var(--mid); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2rem 1.5rem; text-align: center;
-    }
-    .team-avatar {
-      width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 1rem;
-      background: linear-gradient(135deg, var(--accent), var(--gold));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; font-weight: 800; color: var(--navy);
-    }
-    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: .2rem; }
-    .team-role { font-size: .85rem; color: var(--muted); }
-
-    /* ── Footer ──────────────────────────────────────────── */
-    footer {
-      background: #070f18; border-top: 1px solid var(--border);
-      padding: 2.5rem 2rem; text-align: center;
-    }
-    .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: .12em; color: var(--accent); margin-bottom: .5rem; }
-    .footer-text { color: var(--muted); font-size: .85rem; }
-
-    /* ── Utility ─────────────────────────────────────────── */
-    .text-center { text-align: center; }
-    .accent { color: var(--accent); }
-    .gold { color: var(--gold); }
-    @media (max-width: 768px) {
-      nav .nav-links { display: none; }
-      .gdd-box { flex-direction: column; }
-    }
-  </style>
+  <title>Avyra — Full-Proof Website Blueprint</title>
+  <meta name="description" content="Avyra website foundation: auth, profiles, economy, social systems, controls, and admin-ready structure." />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
+  <nav class="site-nav">
+    <div class="brand">AVYRA</div>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">☰</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#auth">Auth</a></li>
+      <li><a href="#pages">Pages</a></li>
+      <li><a href="#systems">Systems</a></li>
+      <li><a href="#controls">Controls</a></li>
+      <li><a href="#tech">Tech</a></li>
+      <li><a href="#roadmap">MVP</a></li>
+    </ul>
+    <a class="nav-cta" href="#cta">Enter Avyra</a>
+  </nav>
 
-<!-- ── NAV ───────────────────────────────────────────────────────── -->
-<nav>
-  <div class="nav-logo">AVYRA</div>
-  <ul class="nav-links">
-    <li><a href="#pillars">Pillars</a></li>
-    <li><a href="#zones">World</a></li>
-    <li><a href="#economy">Economy</a></li>
-    <li><a href="#tech">Tech</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#gdd">GDD</a></li>
-  </ul>
-  <a class="nav-cta" href="#gdd">Download GDD</a>
-</nav>
-
-<!-- ── HERO ──────────────────────────────────────────────────────── -->
-<section id="hero">
-  <div class="grid-bg"></div>
-  <div class="hero-content">
-    <span class="hero-badge">🌐 WebXR · VR Social Universe · Pre-Production</span>
-    <h1 class="title">AVYRA</h1>
-    <p class="hero-sub">"Boundless" — from Sanskrit</p>
-    <p class="hero-tagline">
-      A browser-first, VR-ready 3D social metaverse where you explore living worlds,
-      express your identity, connect in real time, and build a digital economy —
-      <strong>no download required.</strong>
-    </p>
-    <div class="hero-btns">
-      <a href="#gdd" class="btn-primary">📄 View Full GDD</a>
-      <a href="#zones" class="btn-outline">🌍 Explore the World</a>
-    </div>
-    <div class="hero-meta">
-      <div class="hero-stat">
-        <div class="num">7</div>
-        <div class="label">World Zones</div>
+  <header class="hero" id="top">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <span class="badge">WebXR · VR Social Universe · System-Ready</span>
+      <h1>AVYRA</h1>
+      <p class="hero-sub">Your website is the brain. The 3D world is the body.</p>
+      <p class="hero-desc">
+        This is the full-proof first-look website that shows every system you need: login, account creation,
+        profile, avatar, economy, marketplace, chat, admin, and controls — ready for build-out.
+      </p>
+      <div class="hero-actions">
+        <a href="#auth" class="btn primary">Start with Auth</a>
+        <a href="#pages" class="btn ghost">View All Pages</a>
       </div>
-      <div class="hero-stat">
-        <div class="num">6+</div>
-        <div class="label">Mini-Games</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">2</div>
-        <div class="label">Currencies</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">Q4 '26</div>
-        <div class="label">MVP Target</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── PILLARS ───────────────────────────────────────────────────── -->
-<section id="pillars">
-  <div class="container">
-    <p class="section-label">Core Design</p>
-    <h2 class="section-title">Seven Pillars of Avyra</h2>
-    <p class="section-desc">Every feature is designed around one of these pillars. If it doesn't serve a pillar, it doesn't ship.</p>
-    <div class="pillar-grid">
-      <div class="pillar-card">
-        <div class="pillar-icon">🌍</div>
-        <div class="pillar-name">Explore</div>
-        <div class="pillar-text">Hand-crafted 3D zones — city plazas, forest trails, rooftop lounges, underwater galleries.</div>
-      </div>
-      <div class="pillar-card">
-        <div class="pillar-icon">🧑</div>
-        <div class="pillar-name">Express</div>
-        <div class="pillar-text">Deep avatar customisation. Wear, animate, and emote your unique identity.</div>
-      </div>
-      <div class="pillar-card">
-        <div class="pillar-icon">💬</div>
-        <div class="pillar-name">Connect</div>
-        <div class="pillar-text">Spatial voice, text chat, gestures. Meet strangers or host private rooms.</div>
-      </div>
-      <div class="pillar-card">
-        <div class="pillar-icon">🎮</div>
-        <div class="pillar-name">Play</div>
-        <div class="pillar-text">Accessible mini-games embedded in the world — no separate launcher, no friction.</div>
-      </div>
-      <div class="pillar-card">
-        <div class="pillar-icon">💰</div>
-        <div class="pillar-name">Earn</div>
-        <div class="pillar-text">Complete quests, sell creations, win tournaments — all rewarded with WorldCoins.</div>
-      </div>
-      <div class="pillar-card">
-        <div class="pillar-icon">🏢</div>
-        <div class="pillar-name">Work</div>
-        <div class="pillar-text">Branded VR meeting rooms with screen-share, whiteboard, and attendance controls.</div>
-      </div>
-      <div class="pillar-card">
-        <div class="pillar-icon">🛠️</div>
-        <div class="pillar-name">Create</div>
-        <div class="pillar-text">Upload Blender models, script behaviours, and publish to the Creator Marketplace.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── WORLD ZONES ───────────────────────────────────────────────── -->
-<section id="zones">
-  <div class="container">
-    <p class="section-label">World Design</p>
-    <h2 class="section-title">The Zones of Avyra</h2>
-    <p class="section-desc">Each zone is a hand-crafted environment with unique atmosphere, gameplay, and social purpose.</p>
-    <div class="zones-grid">
-      <div class="zone-card">
-        <span class="zone-phase">Phase 1</span>
-        <div class="zone-icon">🏙️</div>
-        <div class="zone-name">Central Plaza</div>
-        <div class="zone-cap">⬤ 50 concurrent users</div>
-        <div class="zone-desc">Spawn point, event stage, notice board. The heartbeat of Avyra — always busy, always alive.</div>
-      </div>
-      <div class="zone-card">
-        <span class="zone-phase">Phase 1</span>
-        <div class="zone-icon">🛒</div>
-        <div class="zone-name">Market Square</div>
-        <div class="zone-cap">⬤ 30 concurrent users</div>
-        <div class="zone-desc">Open bazaar with player shops, NPC vendors, and a live auction board for rare items.</div>
-      </div>
-      <div class="zone-card">
-        <span class="zone-phase">Phase 1</span>
-        <div class="zone-icon">🏢</div>
-        <div class="zone-name">Business Towers</div>
-        <div class="zone-cap">⬤ 20 concurrent users</div>
-        <div class="zone-desc">Private meeting rooms, hotdesking floors, and branded corporate suites for remote teams.</div>
-      </div>
-      <div class="zone-card">
-        <span class="zone-phase">Phase 2</span>
-        <div class="zone-icon">🕹️</div>
-        <div class="zone-name">Game Hub</div>
-        <div class="zone-cap">⬤ 40 concurrent users</div>
-        <div class="zone-desc">Neon arcade with portal entrances to all mini-games and live global leaderboards.</div>
-      </div>
-      <div class="zone-card">
-        <span class="zone-phase">Phase 2</span>
-        <div class="zone-icon">🖼️</div>
-        <div class="zone-name">Art Gallery</div>
-        <div class="zone-cap">⬤ 20 concurrent users</div>
-        <div class="zone-desc">User-uploaded art exhibitions, VR cinema, and rotating curated installations.</div>
-      </div>
-      <div class="zone-card">
-        <span class="zone-phase">Phase 2</span>
-        <div class="zone-icon">🌲</div>
-        <div class="zone-name">Forest Trail</div>
-        <div class="zone-cap">⬤ 15 concurrent users</div>
-        <div class="zone-desc">Organic ambient trail with hidden items, chill zones, and procedural nature sounds.</div>
-      </div>
-      <div class="zone-card">
-        <span class="zone-phase">Phase 3</span>
-        <div class="zone-icon">🌅</div>
-        <div class="zone-name">Rooftop Lounge</div>
-        <div class="zone-cap">⬤ 25 concurrent users</div>
-        <div class="zone-desc">Sunset skybar with DJ booth, live events, and the best view in the metaverse.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── ECONOMY ───────────────────────────────────────────────────── -->
-<section id="economy">
-  <div class="container">
-    <p class="section-label">In-World Economy</p>
-    <h2 class="section-title">Dual-Currency System</h2>
-    <p class="section-desc">A transparent, inflation-resistant economy designed to reward real participation and fair creators.</p>
-    <div class="economy-cols">
-      <div class="currency-card">
-        <div class="cur-sym">🪙</div>
-        <h3>WorldCoin (WC)</h3>
-        <p>The free-to-earn in-game currency. Gained through quests, daily logins, events, and selling items. Never purchasable directly — keeps it fair.</p>
-        <div class="tag-list">
-          <span class="tag">+25 Daily Login</span>
-          <span class="tag">+50–200 Quests</span>
-          <span class="tag">+30–150 Mini-Games</span>
-          <span class="tag">+75 Events</span>
-          <span class="tag">500 WC / day cap</span>
+      <div class="hero-stats">
+        <div>
+          <span class="num">12</span>
+          <span class="label">Core Systems</span>
         </div>
-      </div>
-      <div class="currency-card">
-        <div class="cur-sym">💎</div>
-        <h3>GoldCoin (GC)</h3>
-        <p>Premium currency purchased with real money. €1 = 100 GC. Used for premium items and room upgrades. Convertible to WC at 1:10 — one direction only.</p>
-        <div class="tag-list">
-          <span class="tag">€1 = 100 GC</span>
-          <span class="tag">GC → WC (1:10)</span>
-          <span class="tag">Premium Items</span>
-          <span class="tag">Room Upgrades</span>
-          <span class="tag">Limited Editions</span>
+        <div>
+          <span class="num">8</span>
+          <span class="label">Essential Pages</span>
+        </div>
+        <div>
+          <span class="num">2</span>
+          <span class="label">Currencies</span>
+        </div>
+        <div>
+          <span class="num">4</span>
+          <span class="label">MVP Phases</span>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </header>
 
-<!-- ── TECH STACK ────────────────────────────────────────────────── -->
-<section id="tech">
-  <div class="container">
-    <p class="section-label">Technology</p>
-    <h2 class="section-title">Built on the Open Web</h2>
-    <p class="section-desc">No native app. No locked ecosystem. Avyra runs fully in the browser using open-web standards.</p>
-    <div class="tech-table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Layer</th>
-            <th>Technology</th>
-            <th>Why Chosen</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>3D / VR Engine</td><td>Babylon.js 6</td><td>Best WebXR support, built-in physics &amp; PBR</td></tr>
-          <tr><td>VR API</td><td>WebXR Device API</td><td>Browser-native, works on Quest 2/3 &amp; PCVR</td></tr>
-          <tr><td>Multiplayer</td><td>Socket.IO</td><td>Real-time room sync with automatic fallback</td></tr>
-          <tr><td>Voice Chat</td><td>WebRTC + Agora SDK</td><td>Low-latency spatial positional audio</td></tr>
-          <tr><td>Backend</td><td>Node.js + Express</td><td>JavaScript everywhere, huge ecosystem</td></tr>
-          <tr><td>Database</td><td>Firebase Firestore</td><td>Real-time sync, built-in auth, generous free tier</td></tr>
-          <tr><td>Asset CDN</td><td>Cloudflare R2</td><td>Zero egress fees, global edge network</td></tr>
-          <tr><td>3D Authoring</td><td>Blender 4+</td><td>Open source, GLB export, large community</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ── ROADMAP ───────────────────────────────────────────────────── -->
-<section id="roadmap">
-  <div class="container">
-    <p class="section-label">Milestones</p>
-    <h2 class="section-title">Development Roadmap</h2>
-    <p class="section-desc">Four focused phases, each delivering a shippable increment of the platform.</p>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-phase">Phase 0 — Foundation</div>
-        <div class="tl-title">Environment Setup, Folder Structure &amp; Branch Strategy</div>
-        <div class="tl-desc">Dev toolchain, naming conventions, Firebase emulator, Babylon.js hello-world in browser.</div>
-        <span class="tl-date">Week 1</span>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-phase">Phase 1 — MVP Core</div>
-        <div class="tl-title">Login · Plaza · Multiplayer · Voice · Bracelet UI · Basic Economy</div>
-        <div class="tl-desc">Two users in the same VR zone, real-time Socket.IO sync, spatial audio, Wrist Bracelet rendered on Quest 2, WorldCoin buy/sell working.</div>
-        <span class="tl-date">Weeks 2–15</span>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-phase">Phase 2 — Social + Play</div>
-        <div class="tl-title">Mini-Games · Profiles · Friends · Business Rooms</div>
-        <div class="tl-desc">WorldRace parkour game, friend system, 4-person private meeting room, Feature Management Review #1.</div>
-        <span class="tl-date">Weeks 16–24</span>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-phase">Phase 3 — Creator Economy</div>
-        <div class="tl-title">Creator Marketplace · Market Square · VR Beta · Stripe Payments</div>
-        <div class="tl-desc">Upload + sell 3D items, 100-user public beta, GoldCoin purchase via Stripe live.</div>
-        <span class="tl-date">Weeks 25–36</span>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-phase">Phase 4 — Launch</div>
-        <div class="tl-title">Full Public Launch · Brand Partnerships · API Access</div>
-        <div class="tl-desc">Press kit, brand-sponsored zones, developer API, enterprise meeting room tier.</div>
-        <span class="tl-date">Month 10–12</span>
+  <section id="overview" class="section">
+    <div class="container">
+      <p class="eyebrow">Core Purpose</p>
+      <h2>Website = Brain of Avyra</h2>
+      <p class="section-desc">
+        The site is the identity system, economy control center, social graph, and world-entry gate.
+        Everything below is the exact structure your platform needs to look complete from day one.
+      </p>
+      <div class="grid three">
+        <article class="card">
+          <h3>Entry Point</h3>
+          <p>Landing, onboarding, and the “Enter Avyra” WebXR launch gate.</p>
+          <span class="tag">WebXR Ready</span>
+        </article>
+        <article class="card">
+          <h3>Identity System</h3>
+          <p>Account creation, secure login, avatar linking, profile management.</p>
+          <span class="tag">Secure Auth</span>
+        </article>
+        <article class="card">
+          <h3>Economy + Social</h3>
+          <p>Coins, transactions, marketplace listings, friends, chat, notifications.</p>
+          <span class="tag">Live Systems</span>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ── GDD DOWNLOAD ──────────────────────────────────────────────── -->
-<section id="gdd">
-  <div class="container">
-    <p class="section-label">Documentation</p>
-    <h2 class="section-title">Game Design Document</h2>
-    <p class="section-desc">The complete technical and creative blueprint for Avyra — over 100 pages of detailed specifications.</p>
-    <div class="gdd-box">
-      <div class="gdd-icon">📘</div>
-      <div class="gdd-text">
-        <h3>Avyra GDD v2.0</h3>
-        <p>
-          Full design specification covering every system: world zones, avatar layers, VR UX rules,
-          dual-currency economy, bracelet UI, mini-games, business rooms, creator pipeline,
-          technical architecture with code references, developer workflow, feature lifecycle,
-          roadmap, risk matrix, and appendices.
-        </p>
-        <div class="gdd-stats">
-          <div class="gdd-stat"><div class="n">19</div><div class="l">Sections</div></div>
-          <div class="gdd-stat"><div class="n">50+</div><div class="l">Tables</div></div>
-          <div class="gdd-stat"><div class="n">20+</div><div class="l">Diagrams</div></div>
-          <div class="gdd-stat"><div class="n">v2.0</div><div class="l">Version</div></div>
+  <section id="auth" class="section alt">
+    <div class="container">
+      <p class="eyebrow">Authentication UI</p>
+      <h2>Login, Signup, Forgot, Logout</h2>
+      <p class="section-desc">
+        These are the four essential auth screens every user must pass through. Keep them clean, fast, and secure.
+      </p>
+
+      <div class="auth-tabs" role="tablist">
+        <button class="tab active" data-panel="login" role="tab">Login</button>
+        <button class="tab" data-panel="signup" role="tab">Create Account</button>
+        <button class="tab" data-panel="forgot" role="tab">Forgot Password</button>
+        <button class="tab" data-panel="logout" role="tab">Logout</button>
+      </div>
+
+      <div class="auth-panels">
+        <form class="auth-panel active" id="login" aria-label="Login form">
+          <label>Email or Username
+            <input type="text" placeholder="you@avyra.com" />
+          </label>
+          <label>Password
+            <input type="password" placeholder="••••••••" />
+          </label>
+          <button type="button" class="btn primary">Login</button>
+          <p class="hint">JWT token created, session stored, redirect to dashboard.</p>
+        </form>
+
+        <form class="auth-panel" id="signup" aria-label="Signup form">
+          <label>Username
+            <input type="text" placeholder="aviatrix" />
+          </label>
+          <label>Email
+            <input type="email" placeholder="you@avyra.com" />
+          </label>
+          <label>Password
+            <input type="password" placeholder="Create a strong password" />
+          </label>
+          <label>Confirm Password
+            <input type="password" placeholder="Repeat password" />
+          </label>
+          <button type="button" class="btn primary">Create Account</button>
+          <p class="hint">Inputs validated → password hashed → user stored → verification email sent.</p>
+        </form>
+
+        <form class="auth-panel" id="forgot" aria-label="Forgot password form">
+          <label>Email
+            <input type="email" placeholder="you@avyra.com" />
+          </label>
+          <button type="button" class="btn primary">Send Reset Link</button>
+          <p class="hint">Reset token expires in 30 minutes. User sets new password.</p>
+        </form>
+
+        <div class="auth-panel" id="logout" role="tabpanel">
+          <h3>You are logged out</h3>
+          <p>Session destroyed, JWT cleared, cookies removed.</p>
+          <button class="btn ghost">Return to Home</button>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ── TEAM ───────────────────────────────────────────────────────── -->
-<section id="team">
-  <div class="container">
-    <p class="section-label">The Team</p>
-    <h2 class="section-title">Building Avyra</h2>
-    <div class="team-grid">
-      <div class="team-card">
-        <div class="team-avatar">AK</div>
-        <div class="team-name">Aniket Kanani</div>
-        <div class="team-role">Project Lead · Full-Stack</div>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">+</div>
-        <div class="team-name">3D Artist</div>
-        <div class="team-role">Blender · World Design</div>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">+</div>
-        <div class="team-name">Backend Engineer</div>
-        <div class="team-role">Node.js · Firebase · Socket.IO</div>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">+</div>
-        <div class="team-name">VR UX Designer</div>
-        <div class="team-role">WebXR · Babylon.js · UI</div>
+  <section id="pages" class="section">
+    <div class="container">
+      <p class="eyebrow">Website Pages</p>
+      <h2>Every Page You Need from Day One</h2>
+      <p class="section-desc">This is your full proof navigation map — nothing missing.</p>
+      <div class="grid four">
+        <article class="card">
+          <h3>Home</h3>
+          <p>Hero, vision, features, CTA, and first-look preview.</p>
+        </article>
+        <article class="card">
+          <h3>Sign Up</h3>
+          <p>Create account, verify email, choose starter avatar.</p>
+        </article>
+        <article class="card">
+          <h3>Login</h3>
+          <p>Secure login with 2FA option and session token.</p>
+        </article>
+        <article class="card">
+          <h3>Logout</h3>
+          <p>Clear session, confirm sign-out, safe redirect.</p>
+        </article>
+        <article class="card">
+          <h3>Dashboard</h3>
+          <p>Wallet balances, quick actions, active worlds, tasks.</p>
+        </article>
+        <article class="card">
+          <h3>Profile</h3>
+          <p>Public bio, social links, avatar preview, status.</p>
+        </article>
+        <article class="card">
+          <h3>Marketplace</h3>
+          <p>Item catalog, creator pages, purchases, sales history.</p>
+        </article>
+        <article class="card">
+          <h3>Settings</h3>
+          <p>Audio, graphics, privacy, language, notifications.</p>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ── FOOTER ────────────────────────────────────────────────────── -->
-<footer>
-  <div class="footer-logo">AVYRA</div>
-  <p class="footer-text">
-    Confidential — Pre-Production &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Aniket Kanani
-  </p>
-</footer>
+  <section id="systems" class="section alt">
+    <div class="container">
+      <p class="eyebrow">Platform Systems</p>
+      <h2>Everything the Website Controls</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>User Profile System</h3>
+          <ul>
+            <li>Core: id, username, email, avatar_id, created_at, last_login, verified</li>
+            <li>Extended: bio, profile_picture, social_links, status, current_world, friends_list</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Avatar System</h3>
+          <ul>
+            <li>avatar_id, user_id, model_url, outfit_items[], animations[]</li>
+            <li>Integrate Ready Player Me for fast launch</li>
+            <li>Save + load avatar state into world</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>World Access Flow</h3>
+          <ol>
+            <li>User logs in</li>
+            <li>Click “Enter Avyra”</li>
+            <li>Backend checks auth + avatar</li>
+            <li>Load last location and spawn</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>Economy System</h3>
+          <ul>
+            <li>WorldCoin (earn), GoldCoin (buy)</li>
+            <li>Balance: user_id, worldcoin_balance, goldcoin_balance</li>
+            <li>Transactions table with source & timestamp</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Marketplace</h3>
+          <ul>
+            <li>Item: name, price, category, asset_url, preview_url</li>
+            <li>Buy, sell, creator dashboard, ratings</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Social + Chat</h3>
+          <ul>
+            <li>Global, room, and DM chat (Socket.IO)</li>
+            <li>Friends: pending/accepted/blocked</li>
+            <li>Notifications for events, purchases, requests</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
 
+  <section id="controls" class="section">
+    <div class="container">
+      <p class="eyebrow">Controls & UI</p>
+      <h2>How Players Move and Interact</h2>
+      <div class="grid three">
+        <article class="card">
+          <h3>Desktop Controls</h3>
+          <ul>
+            <li>Move: WASD</li>
+            <li>Look: Mouse</li>
+            <li>Interact: E</li>
+            <li>Run: Shift</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Mobile Controls</h3>
+          <ul>
+            <li>Left joystick: move</li>
+            <li>Right swipe: camera</li>
+            <li>Tap: interact</li>
+            <li>Hold: emotes</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>VR Controls</h3>
+          <ul>
+            <li>Teleport / smooth locomotion toggle</li>
+            <li>Grip: grab items</li>
+            <li>Trigger: interact / select</li>
+            <li>Wrist bracelet UI for menus</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="tech" class="section alt">
+    <div class="container">
+      <p class="eyebrow">System Architecture</p>
+      <h2>Stack That Scales</h2>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <h3>Frontend</h3>
+          <p>Next.js + Tailwind + Three.js (3D preview)</p>
+        </div>
+        <div class="tech-card">
+          <h3>Backend</h3>
+          <p>Node.js (Express/Nest) + Socket.IO</p>
+        </div>
+        <div class="tech-card">
+          <h3>Database</h3>
+          <p>PostgreSQL + Redis caching</p>
+        </div>
+        <div class="tech-card">
+          <h3>Auth</h3>
+          <p>Firebase Auth or JWT + bcrypt</p>
+        </div>
+        <div class="tech-card">
+          <h3>Hosting</h3>
+          <p>Vercel (frontend), Railway/Render (backend)</p>
+        </div>
+        <div class="tech-card">
+          <h3>Payments</h3>
+          <p>Stripe for GoldCoin purchases</p>
+        </div>
+      </div>
+
+      <div class="api-box">
+        <h3>Example API Routes</h3>
+        <code>
+POST /api/auth/signup
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/user/profile
+POST /api/avatar/update
+GET  /api/world/load
+POST /api/market/buy
+GET  /api/transactions
+        </code>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap" class="section">
+    <div class="container">
+      <p class="eyebrow">MVP Build Plan</p>
+      <h2>What to Build First</h2>
+      <div class="timeline">
+        <div class="step">
+          <span>Phase 1</span>
+          <h3>Auth + Database</h3>
+          <p>Signup, login, verification, secure sessions.</p>
+        </div>
+        <div class="step">
+          <span>Phase 2</span>
+          <h3>Profile + Dashboard</h3>
+          <p>Avatar placeholder, wallet, notifications.</p>
+        </div>
+        <div class="step">
+          <span>Phase 3</span>
+          <h3>Avatar + Enter World</h3>
+          <p>Ready Player Me integration, world entry gate.</p>
+        </div>
+        <div class="step">
+          <span>Phase 4</span>
+          <h3>Coins + Mini Multiplayer</h3>
+          <p>WorldCoin rewards and first 2-player test room.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta" class="section alt">
+    <div class="container cta">
+      <h2>Next Step: Build the Real Systems</h2>
+      <p>
+        You now have a complete blueprint UI for the Avyra website. Once this is live, you can
+        replace each section with real backend logic — without changing the structure.
+      </p>
+      <div class="cta-actions">
+        <a class="btn primary" href="#auth">Launch Auth Flow</a>
+        <a class="btn ghost" href="#tech">View Stack</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-brand">AVYRA</div>
+    <p>Full-proof first look website · Built for WebXR · Ready for scale.</p>
+    <span>© <span id="year"></span> Avyra. All rights reserved.</span>
+  </footer>
 </body>
 </html>
