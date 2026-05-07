@@ -323,9 +323,9 @@ SUBTOPICS = [
 
 def pick_vocab(bank, start, size=15, context=""):
     if size > len(bank):
-        detail = f" for {context}" if context else ""
+        detail = context or "unknown context"
         raise ValueError(
-            f"Vocabulary size {size}{detail} cannot exceed vocabulary bank length {len(bank)}."
+            f"Vocabulary bank size mismatch for {detail}: requested {size} words but only {len(bank)} available."
         )
     out = []
     for i in range(size):
@@ -346,9 +346,9 @@ def build_day_entry(day_num, module, subtopic, idx):
         f"strong logic, and refined style across academic, professional, and public contexts."
     )
     guj_exp = (
-        f"Day {day_num} માં તમે C1 સ્તરે '{subtopic}' પર focused અભ્યાસ કરો છો. આજે તમારું ધ્યાન "
-        f"{module['focus']} પર છે. હેતુ એ છે કે તમે academic, professional અને public contexts માં "
-        f"near-native નિયંત્રણ, મજબૂત તર્ક અને પરિષ્કૃત શૈલી સાથે લખી અને બોલી શકો."
+        f"Day {day_num} માં તમે C1 સ્તરે '{subtopic}' પર કેન્દ્રિત અભ્યાસ કરો છો. આજે તમારું ધ્યાન "
+        f"{module['focus']} પર છે. હેતુ એ છે કે તમે શૈક્ષણિક, વ્યાવસાયિક અને જાહેર સંદર્ભોમાં "
+        f"સ્થાનિક જેવી નિયંત્રણ, મજબૂત તર્ક અને પરિષ્કૃત શૈલી સાથે લખી અને બોલી શકો."
     )
 
     sentences = [
