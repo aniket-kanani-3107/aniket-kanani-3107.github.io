@@ -323,7 +323,7 @@ SUBTOPICS = [
 
 def pick_vocab(bank, start, size=15):
     if size > len(bank):
-        raise ValueError("Vocabulary size cannot exceed vocabulary bank length.")
+        raise ValueError(f"Vocabulary size {size} cannot exceed vocabulary bank length {len(bank)}.")
     out = []
     for i in range(size):
         out.append(bank[(start + i) % len(bank)])
@@ -411,7 +411,7 @@ def build_days():
         for day in range(start, end + 1):
             i = day - 271
             subtopic = SUBTOPICS[i]
-            # Offset each module by 3 to avoid identical first-day vocabulary windows.
+            # Offset each module by 3 to stagger starting vocab windows beyond the 20-word bank rhythm.
             idx = (day - start) + module_index * 3
             days.append(build_day_entry(day, module, subtopic, idx))
     return days
