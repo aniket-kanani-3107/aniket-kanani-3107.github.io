@@ -224,7 +224,7 @@ MODULES = [
             ("die Handlungsoption", "course of action", "ક્રિયા વિકલ્પ", "HAND-loongs-op-TSY-ohn"),
             ("die Interessenslage", "interest position", "હિત સ્થિતિ", "in-te-RESS-ens-la-geh"),
             ("der Entscheidungsspielraum", "decision leeway", "નિર્ણય લવચીકતા", "ent-SHYE-doongs-shpeel-raum"),
-            ("die Prioritätsmatrix", "priority matrix", "પ્રાથમિકતા મેટે્રક્સ", "pri-o-ri-TETS-ma-triks"),
+            ("die Prioritätsmatrix", "priority matrix", "પ્રાથમિકતા મેટ્રિક્સ", "pri-o-ri-TETS-ma-triks"),
             ("die Wirkungskette", "impact chain", "અસર શ્રેણી", "VIR-koongs-ket-te"),
         ],
     },
@@ -321,9 +321,12 @@ SUBTOPICS = [
 ]
 
 
-def pick_vocab(bank, start, size=15):
+def pick_vocab(bank, start, size=15, context=""):
     if size > len(bank):
-        raise ValueError(f"Vocabulary size {size} cannot exceed vocabulary bank length {len(bank)}.")
+        detail = f" for {context}" if context else ""
+        raise ValueError(
+            f"Vocabulary size {size}{detail} cannot exceed vocabulary bank length {len(bank)}."
+        )
     out = []
     for i in range(size):
         out.append(bank[(start + i) % len(bank)])
@@ -331,7 +334,7 @@ def pick_vocab(bank, start, size=15):
 
 
 def build_day_entry(day_num, module, subtopic, idx):
-    vocab = pick_vocab(module["vocab"], idx)
+    vocab = pick_vocab(module["vocab"], idx, context=f"Day {day_num} ({module['name']})")
     k1, k2, k3 = vocab[0][0], vocab[1][0], vocab[2][0]
 
     title = f"{subtopic.upper()} 🚀"

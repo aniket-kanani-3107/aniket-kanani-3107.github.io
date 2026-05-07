@@ -351,7 +351,7 @@ SUBTOPICS = [
 
 def pick_vocab(bank, start, size=15):
     if size > len(bank):
-        raise ValueError("Vocabulary size cannot exceed vocabulary bank length.")
+        raise ValueError(f"Vocabulary size {size} cannot exceed vocabulary bank length {len(bank)}.")
     out = []
     for i in range(size):
         out.append(bank[(start + i) % len(bank)])
