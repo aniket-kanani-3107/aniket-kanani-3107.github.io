@@ -422,7 +422,7 @@ def level_for_day(day_num):
     for name, start, end in LEVEL_MAP:
         if start <= day_num <= end:
             return name, start, end
-    raise ValueError(f"Invalid day: {day_num}")
+    raise ValueError(f"Invalid day: {day_num}. Day number must be between 1 and 365.")
 
 
 def make_day(level_cfg, day_num):
