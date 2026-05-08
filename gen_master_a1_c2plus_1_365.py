@@ -329,7 +329,7 @@ LEVELS = [
             ("Schlagfertigkeit", "quick wit", "તાત્કાલિક બુદ્ધિપ્રતિક્રિયા", "SHLAG-fer-tikh-kite"), ("Selbstkorrektur", "self-correction", "સ્વ-સુધારો", "ZELBST-kor-rek-TOOR"),
             ("Stilsicherheit", "stylistic confidence", "શૈલી વિશ્વાસ", "SHTIL-zikher-hite"), ("Eleganz", "elegance", "આકર્ષક શૈલી", "eh-LE-gants"),
             ("Diskurs", "discourse", "વૈચારિક ચર્ચા", "dis-KOORS"), ("Mehrdeutigkeit", "ambiguity", "બહુઅર્થિયતા", "MAYR-doy-tig-kite"),
-            ("Transferleistung", "transfer ability", "રૂપાંતર ક્ષમતા", "trans-FER-ly-stoong"), ("Präzisionsarbeit", "precision work", "ચોક્સાઇ કાર્ય", "pray-tsi-ZY-ohns-ar-bite"),
+            ("Transferleistung", "transfer ability", "રૂપાંતર ક્ષમતા", "trans-FER-ly-stoong"), ("Präzisionsarbeit", "precision work", "ચોકસાઈ કાર્ય", "pray-tsi-ZY-ohns-ar-bite"),
             ("Sprachintelligenz", "language intelligence", "ભાષિક બુદ્ધિ", "SHPRAKH-in-te-li-GENTS"), ("Weiterentwicklung", "further development", "આગળનો વિકાસ", "VY-ter-ent-vik-loong"),
         ],
     },
