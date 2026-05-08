@@ -150,7 +150,7 @@ LEVELS = [
             ("Termin", "appointment", "મુલાકાત સમય", "ter-MEEN"), ("Straße", "street", "રસ્તો", "SHTRA-seh"),
             ("links", "left", "ડાબે", "links"), ("rechts", "right", "જમણે", "rekhts"), ("geradeaus", "straight", "સીધું", "geh-RAH-deh-ows"),
             ("bezahlen", "to pay", "ચુકવણી કરવી", "beh-TSAH-len"), ("teuer", "expensive", "મોંઘું", "TOY-er"),
-            ("günstig", "cheap", "સસ્તુ", "GÜN-stikh"), ("Freund", "friend", "મિત્ર", "froynt"), ("lernen", "learn", "શીખવું", "LERN-en"),
+            ("günstig", "cheap", "સસ્તુ", "GÜN-stikh"), ("Freund", "friend", "મિત્ર", "froynt"), ("sprechen", "to speak", "બોલવું", "SHPREKH-en"),
         ],
     },
     {
