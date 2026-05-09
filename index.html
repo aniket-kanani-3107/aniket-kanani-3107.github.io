@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEXUS OS — Personal Data Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar panel">
+        <div class="brand">
+          <div class="logo">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path
+                d="M10 18 32 6l22 12v28L32 58 10 46V18Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                d="M20 24 32 18l12 6v16l-12 6-12-6V24Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1>NEXUS</h1>
+            <p>Data Command Center</p>
+          </div>
+        </div>
+
+        <div class="section-title">Navigation</div>
+        <nav class="nav">
+          <button class="nav-item active"><span class="nav-icon"></span>Dashboard</button>
+          <button class="nav-item"><span class="nav-icon"></span>All Files</button>
+          <button class="nav-item"><span class="nav-icon"></span>Recent</button>
+          <button class="nav-item"><span class="nav-icon"></span>Favorites</button>
+          <button class="nav-item"><span class="nav-icon"></span>Tags</button>
+          <button class="nav-item"><span class="nav-icon"></span>Tasks</button>
+          <button class="nav-item"><span class="nav-icon"></span>Vault</button>
+          <button class="nav-item"><span class="nav-icon"></span>Trash</button>
+        </nav>
+
+        <div class="section-title">My Structure</div>
+        <div class="tree">
+          <button class="tree-item active">Aniket</button>
+          <div class="tree-children">
+            <button class="tree-item">Projects</button>
+            <button class="tree-item">Photos</button>
+            <button class="tree-item">Documents</button>
+            <button class="tree-item">Videos</button>
+            <button class="tree-item">3D Assets</button>
+            <button class="tree-item">Personal</button>
+            <button class="tree-item">Work</button>
+            <button class="tree-item">References</button>
+          </div>
+          <button class="tree-item">Backup</button>
+          <button class="tree-item">Archive</button>
+          <button class="tree-item">Important</button>
+        </div>
+
+        <div class="storage panel inset">
+          <div class="section-title">Storage Overview</div>
+          <div class="storage-ring">
+            <div class="ring-center">
+              <div class="ring-value">78%</div>
+              <div class="ring-label">Used</div>
+            </div>
+          </div>
+          <div class="storage-stats">
+            <div>
+              <span>Total Space</span>
+              <strong>16 TB</strong>
+            </div>
+            <div>
+              <span>Used Space</span>
+              <strong>12.4 TB</strong>
+            </div>
+            <div>
+              <span>Free Space</span>
+              <strong>3.6 TB</strong>
+            </div>
+          </div>
+          <button class="primary-btn">Manage Storage</button>
+        </div>
+      </aside>
+
+      <header class="topbar panel">
+        <div class="search">
+          <span class="search-icon"></span>
+          <input type="text" placeholder="Search anything..." />
+          <button class="ai-btn">AI</button>
+        </div>
+        <div class="topbar-right">
+          <div class="status-card">
+            <span>System Status</span>
+            <strong>Optimal</strong>
+            <div class="status-line"></div>
+          </div>
+          <div class="top-icons">
+            <button class="icon-btn">⦿</button>
+            <button class="icon-btn">★</button>
+            <button class="icon-btn">⚙</button>
+          </div>
+          <div class="clock">
+            <div class="time">10:42 PM</div>
+            <div class="date">24 May 2024</div>
+          </div>
+          <div class="profile">
+            <div class="avatar"></div>
+            <div>
+              <div class="name">ANIKET</div>
+              <div class="role">Commander</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="content-header panel">
+          <div class="breadcrumbs">My Drive &gt; Aniket</div>
+          <div class="header-main">
+            <div class="folder-title">
+              <div class="folder-icon"></div>
+              <div>
+                <h2>Aniket</h2>
+                <span>12 Folders, 243 Files</span>
+              </div>
+            </div>
+            <div class="view-controls">
+              <button class="chip active">Holo View</button>
+              <button class="chip">Grid View</button>
+              <button class="chip">List View</button>
+              <button class="chip">Sort</button>
+              <button class="primary-btn">+ New</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="folder-section panel">
+          <div class="section-header">
+            <span>Folders (12)</span>
+            <div class="carousel-controls">
+              <button class="icon-btn">◀</button>
+              <button class="icon-btn">▶</button>
+            </div>
+          </div>
+          <div class="folder-strip">
+            <article class="folder-card blue">
+              <div class="folder-glow"></div>
+              <div class="folder-face"></div>
+              <h4>Projects</h4>
+              <span>23 items</span>
+            </article>
+            <article class="folder-card blue">
+              <div class="folder-glow"></div>
+              <div class="folder-face"></div>
+              <h4>Photos</h4>
+              <span>153 items</span>
+            </article>
+            <article class="folder-card blue">
+              <div class="folder-glow"></div>
+              <div class="folder-face"></div>
+              <h4>Documents</h4>
+              <span>31 items</span>
+            </article>
+            <article class="folder-card purple">
+              <div class="folder-glow"></div>
+              <div class="folder-face"></div>
+              <h4>Videos</h4>
+              <span>28 items</span>
+            </article>
+            <article class="folder-card purple">
+              <div class="folder-glow"></div>
+              <div class="folder-face"></div>
+              <h4>3D Assets</h4>
+              <span>47 items</span>
+            </article>
+            <article class="folder-card blue">
+              <div class="folder-glow"></div>
+              <div class="folder-face"></div>
+              <h4>Personal</h4>
+              <span>39 items</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="file-section panel">
+          <div class="section-header">
+            <span>Files (243)</span>
+            <div class="filters">
+              <button class="chip active">All</button>
+              <button class="chip">Images</button>
+              <button class="chip">Videos</button>
+              <button class="chip">Documents</button>
+              <button class="chip">3D</button>
+              <button class="chip">Others</button>
+              <button class="chip">Filter</button>
+            </div>
+          </div>
+          <div class="file-grid">
+            <article class="file-card">
+              <div class="file-thumb image">JPG</div>
+              <div class="file-meta">
+                <h5>mountain_lake.jpg</h5>
+                <span>3.6 MB · 24/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb video">MP4</div>
+              <div class="file-meta">
+                <h5>cyber_city.mp4</h5>
+                <span>128 MB · 24/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb doc">PDF</div>
+              <div class="file-meta">
+                <h5>project_plan.pdf</h5>
+                <span>2.1 MB · 23/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb blend">BLEND</div>
+              <div class="file-meta">
+                <h5>character_v01.blend</h5>
+                <span>98 MB · 23/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb sheet">XLSX</div>
+              <div class="file-meta">
+                <h5>invoice_may.xlsx</h5>
+                <span>18 KB · 23/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb text">TXT</div>
+              <div class="file-meta">
+                <h5>notes.txt</h5>
+                <span>2 KB · 22/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb image">JPG</div>
+              <div class="file-meta">
+                <h5>forest_trail.jpg</h5>
+                <span>4.2 MB · 22/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb blend">BLEND</div>
+              <div class="file-meta">
+                <h5>interior_design.blend</h5>
+                <span>67.8 MB · 21/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb video">MP4</div>
+              <div class="file-meta">
+                <h5>promo_video.mp4</h5>
+                <span>95.4 MB · 21/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb doc">DOCX</div>
+              <div class="file-meta">
+                <h5>meeting_notes.docx</h5>
+                <span>24 KB · 21/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb archive">ZIP</div>
+              <div class="file-meta">
+                <h5>texture_pack.zip</h5>
+                <span>512 MB · 21/05/24</span>
+              </div>
+            </article>
+            <article class="file-card">
+              <div class="file-thumb ai">AI</div>
+              <div class="file-meta">
+                <h5>ai_generated_01.png</h5>
+                <span>3.1 MB · 21/05/24</span>
+              </div>
+            </article>
+          </div>
+          <button class="ghost-btn">Load More</button>
+        </section>
+      </main>
+
+      <aside class="preview panel">
+        <div class="preview-block">
+          <div class="section-header">Preview</div>
+          <div class="preview-image"></div>
+          <div class="preview-actions">
+            <button class="icon-btn">👁</button>
+            <button class="icon-btn">↗</button>
+            <button class="icon-btn">ℹ</button>
+            <button class="icon-btn">❤</button>
+            <button class="icon-btn">⋯</button>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <div class="section-header">Details</div>
+          <div class="details-grid">
+            <div><span>Name</span><strong>mountain_lake.jpg</strong></div>
+            <div><span>Type</span><strong>JPG Image</strong></div>
+            <div><span>Size</span><strong>3.6 MB</strong></div>
+            <div><span>Location</span><strong>My Drive &gt; Aniket &gt; Photos</strong></div>
+            <div><span>Created</span><strong>16 May 2024</strong></div>
+            <div><span>Modified</span><strong>24 May 2024</strong></div>
+            <div><span>Dimensions</span><strong>4032 × 3024</strong></div>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <div class="section-header">Tags</div>
+          <div class="tag-list">
+            <span class="tag">nature</span>
+            <span class="tag">mountain</span>
+            <span class="tag">lake</span>
+            <span class="tag">landscape</span>
+            <button class="chip">+</button>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <div class="section-header">AI Insights</div>
+          <div class="insight">
+            <div><span>Scene</span><strong>Nature</strong></div>
+            <div><span>Objects</span><strong>Mountain, Lake, Sky, Trees</strong></div>
+            <div><span>Mood</span><strong>Calm, Peaceful</strong></div>
+            <div class="palette">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <button class="primary-btn">Generate Similar</button>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <div class="section-header">Recent Activity</div>
+          <ul class="activity">
+            <li>You moved 3 files to /Aniket/Projects <span>2m ago</span></li>
+            <li>You renamed mountain_01.jpg <span>15m ago</span></li>
+            <li>You added 12 new files <span>1h ago</span></li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="bottom-modules panel">
+        <div class="module">AI Assistant</div>
+        <div class="module">Duplicate Finder</div>
+        <div class="module">Data Analytics</div>
+        <div class="module">Secure Vault</div>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
