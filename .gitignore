@@ -1,0 +1,10 @@
+node_modules/
+job_application/**/node_modules/
+job_application/backend/database/*.db
+job_application/backend/storage/uploads/
+job_application/backend/storage/generated/
+job_application/backend/storage/resumes/
+job_application/frontend/dist/
+job_application/generated/
+job_application/exports/
+job_application/temp/

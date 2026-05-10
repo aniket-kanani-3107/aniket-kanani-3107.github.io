@@ -1,0 +1,24 @@
+[
+  {
+    "company": "Figma",
+    "title": "Software Engineer, Growth",
+    "location": "Remote, North America",
+    "url": "https://boards.greenhouse.io/figma/jobs/1111111",
+    "description": "Build growth experiments, scale onboarding flows, collaborate with product and design, optimize funnel analytics.",
+    "date_found": "2026-05-09T14:00:00.000Z",
+    "status": "saved",
+    "ats_score": 76,
+    "source": "Greenhouse"
+  },
+  {
+    "company": "Notion",
+    "title": "Full Stack Engineer",
+    "location": "San Francisco, CA (Hybrid)",
+    "url": "https://jobs.lever.co/notion/2222222",
+    "description": "Build customer-facing features, maintain API performance, improve data pipelines, collaborate cross-functionally.",
+    "date_found": "2026-05-09T09:30:00.000Z",
+    "status": "applied",
+    "ats_score": 82,
+    "source": "Lever"
+  }
+]

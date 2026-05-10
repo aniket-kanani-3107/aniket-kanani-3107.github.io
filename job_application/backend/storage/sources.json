@@ -1,0 +1,10 @@
+{
+  "greenhouse": [
+    { "token": "stripe", "label": "Stripe" },
+    { "token": "figma", "label": "Figma" }
+  ],
+  "lever": [
+    { "token": "notion", "label": "Notion" },
+    { "token": "robinhood", "label": "Robinhood" }
+  ]
+}
