@@ -3,7 +3,18 @@ const path = require('path');
 const mammoth = require('mammoth');
 const pdf = require('pdf-parse');
 
+const uploadsDir = path.join(__dirname, '..', 'storage', 'uploads');
+
+const ensureSafePath = (filePath) => {
+  const resolvedPath = path.resolve(filePath);
+  const resolvedUploads = path.resolve(uploadsDir);
+  if (!resolvedPath.startsWith(resolvedUploads)) {
+    throw new Error('Invalid resume path.');
+  }
+};
+
 const parseResume = async (filePath) => {
+  ensureSafePath(filePath);
   const ext = path.extname(filePath).toLowerCase();
 
   if (ext === '.pdf') {

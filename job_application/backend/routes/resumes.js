@@ -2,13 +2,20 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const rateLimit = require('express-rate-limit');
 const { parseResume } = require('../services/resumeParser');
 const { buildResumePrompt, buildCoverLetterPrompt } = require('../services/promptService');
 const { logActivity } = require('../services/activityService');
 
 const router = express.Router();
-const upload = multer({
-  dest: path.join(__dirname, '..', 'storage', 'uploads'),
+const uploadsDir = path.join(__dirname, '..', 'storage', 'uploads');
+const resumesDir = path.join(__dirname, '..', 'storage', 'resumes');
+const upload = multer({ dest: uploadsDir });
+const resumeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 12,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 router.get('/', (req, res) => {
@@ -19,7 +26,7 @@ router.get('/', (req, res) => {
   res.json(resumes);
 });
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', resumeLimiter, upload.single('file'), async (req, res) => {
   const db = req.app.locals.db;
   if (!req.file) {
     return res.status(400).json({ error: 'File is required.' });
@@ -38,7 +45,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   return res.json({ id: info.lastInsertRowid, parsedText });
 });
 
-router.post('/save', (req, res) => {
+router.post('/save', resumeLimiter, (req, res) => {
   const db = req.app.locals.db;
   const { content, version_name, job_id } = req.body;
 
@@ -50,7 +57,12 @@ router.post('/save', (req, res) => {
     .replace(/[^a-z0-9-_]/gi, '_')
     .toLowerCase();
   const filename = `${safeName}_${Date.now()}.txt`;
-  const filePath = path.join(__dirname, '..', 'storage', 'resumes', filename);
+  const resolvedResumesDir = path.resolve(resumesDir);
+  const filePath = path.join(resolvedResumesDir, filename);
+
+  if (!filePath.startsWith(resolvedResumesDir)) {
+    return res.status(400).json({ error: 'Invalid resume path.' });
+  }
 
   fs.writeFileSync(filePath, content, 'utf-8');
 

@@ -54,7 +54,11 @@ const generatePdf = async ({ html, outputPath }) => {
 const createResumePdf = async ({ payload, outputDir }) => {
   const safeName = payload.name.replace(/[^a-z0-9-_]/gi, '_').toLowerCase();
   const filename = `${safeName}_resume_${Date.now()}.pdf`;
-  const outputPath = path.join(outputDir, filename);
+  const resolvedOutputDir = path.resolve(outputDir);
+  const outputPath = path.join(resolvedOutputDir, filename);
+  if (!outputPath.startsWith(resolvedOutputDir)) {
+    throw new Error('Invalid output path.');
+  }
 
   const html = buildResumeHtml(payload);
   await generatePdf({ html, outputPath });
