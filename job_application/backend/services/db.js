@@ -85,6 +85,15 @@ const initDb = () => {
       created_at TEXT DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS search_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      role TEXT,
+      location TEXT,
+      remote INTEGER,
+      include_wellfound INTEGER,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS settings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       target_roles TEXT,

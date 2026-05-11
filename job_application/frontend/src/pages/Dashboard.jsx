@@ -36,6 +36,11 @@ const Dashboard = () => {
     fetchDashboard();
   }, []);
 
+  const trend = data.latestJobs
+    .map((job) => job.ats_score || 0)
+    .slice(0, 6)
+    .reverse();
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 md:grid-cols-3">
@@ -77,6 +82,28 @@ const Dashboard = () => {
         </Card>
 
         <div className="flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>ATS Score Trend</CardTitle>
+              <Badge className="bg-white/10">Last {trend.length} jobs</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end gap-3">
+                {trend.map((value, index) => (
+                  <div key={`${value}-${index}`} className="flex flex-1 flex-col items-center gap-2">
+                    <div className="flex h-28 w-full items-end rounded-full bg-white/10">
+                      <div
+                        className="w-full rounded-full bg-gradient-to-t from-accent to-accentSoft"
+                        style={{ height: `${Math.max(value, 8)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-400">{value}%</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Recent Resumes</CardTitle>

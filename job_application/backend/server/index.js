@@ -13,6 +13,7 @@ const pdfRoutes = require('../routes/pdf');
 const dashboardRoutes = require('../routes/dashboard');
 const settingsRoutes = require('../routes/settings');
 const recruiterRoutes = require('../routes/recruiters');
+const searchRoutes = require('../routes/searches');
 
 ensureStorage();
 const db = initDb();
@@ -37,6 +38,7 @@ app.use('/api/pdf', pdfRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/recruiters', recruiterRoutes);
+app.use('/api/searches', searchRoutes);
 
 startScheduler(db);
 

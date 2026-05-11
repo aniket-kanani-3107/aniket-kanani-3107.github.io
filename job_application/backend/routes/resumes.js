@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const { parseResume } = require('../services/resumeParser');
@@ -35,6 +36,32 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
   logActivity(db, 'resume_upload', `Resume uploaded: ${versionName}`);
   return res.json({ id: info.lastInsertRowid, parsedText });
+});
+
+router.post('/save', (req, res) => {
+  const db = req.app.locals.db;
+  const { content, version_name, job_id } = req.body;
+
+  if (!content) {
+    return res.status(400).json({ error: 'Resume content is required.' });
+  }
+
+  const safeName = (version_name || 'optimized')
+    .replace(/[^a-z0-9-_]/gi, '_')
+    .toLowerCase();
+  const filename = `${safeName}_${Date.now()}.txt`;
+  const filePath = path.join(__dirname, '..', 'storage', 'resumes', filename);
+
+  fs.writeFileSync(filePath, content, 'utf-8');
+
+  const info = db
+    .prepare(
+      'INSERT INTO resumes (job_id, version_name, file_path, parsed_text) VALUES (?, ?, ?, ?)'
+    )
+    .run(job_id || null, version_name || 'Optimized Resume', filePath, content);
+
+  logActivity(db, 'resume_saved', `Resume saved: ${version_name || 'Optimized Resume'}`);
+  return res.json({ id: info.lastInsertRowid, filePath });
 });
 
 router.post('/optimize', (req, res) => {

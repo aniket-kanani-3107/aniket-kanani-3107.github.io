@@ -21,4 +21,4 @@ const Button = ({ className, variant, ...props }) => (
   <button className={cn(buttonVariants({ variant }), className)} {...props} />
 );
 
-export { Button, buttonVariants };
+export { Button };

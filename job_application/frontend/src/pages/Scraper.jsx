@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../api/client';
 import PageShell from '../components/layout/PageShell';
 import { Button } from '../components/ui/button';
@@ -13,7 +13,17 @@ const Scraper = () => {
     includeWellfound: false,
   });
   const [results, setResults] = useState([]);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const loadHistory = async () => {
+    const response = await api.get('/searches');
+    setHistory(response.data);
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
 
   const handleChange = (field, value) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
@@ -23,6 +33,7 @@ const Scraper = () => {
     setLoading(true);
     const response = await api.post('/jobs/scrape', filters);
     setResults(response.data.jobs);
+    loadHistory();
     setLoading(false);
   };
 
@@ -92,6 +103,25 @@ const Scraper = () => {
           ))}
           {!results.length && (
             <p className="text-sm text-slate-400">Run a scan to load jobs.</p>
+          )}
+        </div>
+      </PageShell>
+
+      <PageShell title="Search History" subtitle="Track recent filter runs and automation scans.">
+        <div className="grid gap-3 md:grid-cols-2">
+          {history.map((item) => (
+            <div key={item.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">
+                {item.role || 'All roles'} · {item.location || 'All locations'}
+              </p>
+              <p className="text-xs text-slate-400">
+                {item.remote ? 'Remote only' : 'All locations'} · {item.include_wellfound ? 'Wellfound on' : 'Wellfound off'}
+              </p>
+              <p className="mt-2 text-xs text-slate-500">{item.created_at}</p>
+            </div>
+          ))}
+          {!history.length && (
+            <p className="text-sm text-slate-400">No searches logged yet.</p>
           )}
         </div>
       </PageShell>

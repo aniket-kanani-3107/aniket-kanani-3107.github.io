@@ -39,6 +39,13 @@ router.post('/scrape', async (req, res) => {
   const db = req.app.locals.db;
   const { role, location, remote, includeWellfound } = req.body;
   try {
+    db.prepare(
+      `INSERT INTO search_history (role, location, remote, include_wellfound)
+       VALUES (?, ?, ?, ?)`
+    ).run(role || '', location || '', remote ? 1 : 0, includeWellfound ? 1 : 0);
+
+    logActivity(db, 'search', `Search run for ${role || 'roles'} in ${location || 'all locations'}`);
+
     const jobs = await scrapeAllSources(db, {
       role: role || '',
       location: location || '',
