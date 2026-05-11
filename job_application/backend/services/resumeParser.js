@@ -5,16 +5,18 @@ const pdf = require('pdf-parse');
 
 const uploadsDir = path.join(__dirname, '..', 'storage', 'uploads');
 
-const ensureSafePath = (filePath) => {
-  const resolvedPath = path.resolve(filePath);
+const resolveUploadPath = (filename) => {
+  const safeFilename = path.basename(filename);
   const resolvedUploads = path.resolve(uploadsDir);
-  if (!resolvedPath.startsWith(resolvedUploads)) {
+  const filePath = path.join(resolvedUploads, safeFilename);
+  if (!filePath.startsWith(resolvedUploads)) {
     throw new Error('Invalid resume path.');
   }
+  return filePath;
 };
 
-const parseResume = async (filePath) => {
-  ensureSafePath(filePath);
+const parseResume = async (filename) => {
+  const filePath = resolveUploadPath(filename);
   const ext = path.extname(filePath).toLowerCase();
 
   if (ext === '.pdf') {

@@ -32,14 +32,15 @@ router.post('/upload', resumeLimiter, upload.single('file'), async (req, res) =>
     return res.status(400).json({ error: 'File is required.' });
   }
 
-  const parsedText = await parseResume(req.file.path);
+  const parsedText = await parseResume(req.file.filename);
   const versionName = req.body.version_name || req.file.originalname;
 
+  const storedPath = path.join(uploadsDir, req.file.filename);
   const info = db
     .prepare(
       'INSERT INTO resumes (job_id, version_name, file_path, parsed_text) VALUES (?, ?, ?, ?)'
     )
-    .run(req.body.job_id || null, versionName, req.file.path, parsedText);
+    .run(req.body.job_id || null, versionName, storedPath, parsedText);
 
   logActivity(db, 'resume_upload', `Resume uploaded: ${versionName}`);
   return res.json({ id: info.lastInsertRowid, parsedText });
